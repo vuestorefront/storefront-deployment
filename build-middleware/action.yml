@@ -1,0 +1,65 @@
+name: Build Middleware
+description: Builds Middleware app docker image
+inputs:
+  project_name:
+    description: 'Project name'
+    required: true
+  docker_registry_url:
+    description: 'Docker registry url'
+    required: false
+    default: 'registry.vuestorefront.cloud'
+  cloud_username:
+    description: 'Cloud username'
+    required: true
+  cloud_password:
+    description: 'Cloud password'
+    required: true
+  npm_email:
+    description: 'NPM email'
+    required: true
+  npm_pass:
+    description: 'NPM password'
+    required: true
+  npm_user:
+    description: 'NPM user'
+    required: true
+  npm_registry:
+    description: 'NPM registry'
+    required: false
+    default: 'https://registrynpm.storefrontcloud.io'
+runs:
+  using: "composite"
+  steps:
+    - name: Setup node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+    - name: Encode Basic Auth
+      id: base64-auth
+      shell: bash
+      run: |
+        echo "BASIC_AUTH_TOKEN=$(echo -n ${{ inputs.cloud_username }}:${{ inputs.cloud_password }} | base64 -w 0)" >> "$GITHUB_OUTPUT"
+    - name: Check for existing image
+      id: check-existing-image
+      uses: javajawa/check-registry-for-image@v2
+      with:
+        registry: ${{ inputs.docker_registry_url }}
+        auth: "Basic ${{ steps.base64-auth.outputs.BASIC_AUTH_TOKEN }}"
+        repository: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront-middleware
+        tag: ${{ github.sha }}
+    - name: Build and publish docker image (middleware)
+      uses: elgohr/Publish-Docker-Github-Action@v5
+      if: ${{ steps.check-existing-image.outputs.exists == 'false' }}
+      with:
+        name: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront-middleware:${{ github.sha }}
+        registry: ${{ inputs.docker_registry_url }}
+        username: ${{ inputs.cloud_username }}
+        password: ${{ inputs.cloud_password }}
+        dockerfile: .vuestorefrontcloud/docker/middleware/Dockerfile-middleware
+        buildoptions: --compress
+        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY
+      env:
+        NPM_EMAIL: ${{ inputs.npm_email }}
+        NPM_PASS: ${{ inputs.npm_pass }}
+        NPM_USER: ${{ inputs.npm_user }}
+        NPM_REGISTRY: ${{ inputs.npm_registry }}
