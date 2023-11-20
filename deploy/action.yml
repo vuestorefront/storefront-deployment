@@ -41,30 +41,7 @@ runs:
     - name: Deploy on ${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
       shell: bash
       run: |
-        curl --location --request PATCH '${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy' --header 'Content-Type: application/json' --data-raw '{ "cloudUserId": "${{ inputs.cloud_username }}", "cloudUserPassword": "${{ inputs.cloud_password }}", "dockerImageHash": "${{ github.sha }}"}'
-
-    - name: Deploy middleware on ${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io/api/
-      shell: bash
-      run: |
-        if curl -f -s -H 'X-User-Id: ${{ inputs.cloud_username }}' -H 'X-Api-Key: ${{ inputs.cloud_password }}' -H 'Content-Type: application/json' -X PATCH -d '{
-          "front_version":"${{ github.sha }}",
-          "additional_apps": {
-            "apps":[{
-              "name":"middleware",
-              "tag":"${{ github.sha }}",
-              "image":"${{ inputs.docker_registry_url }}/${{ inputs.project_name }}-storefrontcloud-io/vue-storefront-middleware",
-              "path":"/api/",
-              "port":"4000",
-              "has_base_path":false
-            }],
-            "enabled": true
-            }
-          }' ${{ inputs.cloud_api_url }}/instance/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io; then
-          echo "Instance updated"
-        else
-          echo "Something went wrong during the update process..."
-          exit 1
-        fi
+        curl --location --request PATCH '${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy' --header 'Content-Type: application/json' --data-raw '{ "cloudUserId": "${{ inputs.cloud_username }}", "cloudUserPassword": "${{ inputs.cloud_password }}", "dockerImageHash": "${{ github.sha }}", "middlewareData": { "port": 4000, "path": "/api", "has_base_path":false } }'
 
     - name: Update deployment status (success)
       if: success()
