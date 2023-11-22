@@ -15,7 +15,7 @@ With those four you can easily compose the deployment script for your needs.
 ### build-frontend
 
 ```yaml
-uses: vuestorefront/storefront-deployment/build-frontend
+uses: vuestorefront/storefront-deployment/build-frontend@v1
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -59,7 +59,7 @@ with:
 ### build-middleware
 
 ```yaml
-uses: vuestorefront/storefront-deployment/build-middleware
+uses: vuestorefront/storefront-deployment/build-middleware@v1
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -81,3 +81,25 @@ with:
 - `npm_pass`: Password for the private NPM registry. Required field.
 - `docker_registry_url`: URL to the Docker image registry. Optional field. Defaults to `registry.vuestorefront.cloud`.
 - `npm_registry`: URL to the private NPM registry. Optional field. Defaults to `https://registrynpm.storefrontcloud.io`.
+
+### deploy
+
+```yaml
+uses: vuestorefront/storefront-deployment/deploy@v1
+with:
+  project_name: ${{ secrets.PROJECT_NAME }}
+  cloud_username: ${{ secrets.CLOUD_USERNAME }}
+  cloud_password: ${{ secrets.CLOUD_PASSWORD }}
+  cloud_region: ${{ secrets.CLOUD_REGION }}
+  docker_registry_url: 'registry.vuestorefront.cloud'
+  console_api: 'https://api.platform.vuestorefront.io'
+```
+
+**Input Parameters:**
+
+- `project_name`: Project name in Console. Required field.
+- `cloud_username`: Cloud API and Docker registry username. Required field.
+- `cloud_password`: Cloud API and Docker registry password. Required field.
+- `cloud_region`: Region where the environment is set up in the Console. Required field.
+- `docker_registry_url`: URL to the Docker image registry. Optional field. Defaults to `registry.vuestorefront.cloud`.
+- `console_api_url`: URL to the Console. Optional field. Defaults to `https://api.platform.vuestorefront.io`.

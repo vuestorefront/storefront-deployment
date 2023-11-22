@@ -21,10 +21,6 @@ inputs:
     description: 'URI for Vue Storefront Console API'
     required: false
     default: 'https://api.platform.vuestorefront.io'
-  cloud_api_url:
-    description: 'URI for Vue Storefront Cloud API'
-    required: false
-    default: 'https://farmer.vuestorefront.cloud'
 
 runs:
   using: "composite"
