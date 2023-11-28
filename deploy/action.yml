@@ -20,7 +20,7 @@ inputs:
   console_api_url:
     description: 'URI for Vue Storefront Console API'
     required: false
-    default: 'https://api.platform.vuestorefront.io'
+    default: 'https://api.console.vuestorefront.io'
 
 runs:
   using: "composite"
