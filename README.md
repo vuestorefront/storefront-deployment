@@ -27,9 +27,7 @@ with:
   frontend: 'next'
   docker_registry_url: 'registry.vuestorefront.cloud'
   npm_registry: 'https://registrynpm.storefrontcloud.io'
-  api_base_url: format('{0}.{1}.{2}', secrets.PROJECT_NAME, secrets.CLOUD_REGION, 'gcp.storefrontcloud.io')
-  api_subpath: '/api'
-  api_protocol: 'https'
+  api_base_url: format('https://{0}.{1}.{2}/api', secrets.PROJECT_NAME, secrets.CLOUD_REGION, 'gcp.storefrontcloud.io')
   multistore_enabled: false
   image_provider: 'ipx'
   image_provider_upload_url: ${{ secrets.IMAGE_PROVIDER_UPLOAD_URL }}
@@ -48,10 +46,7 @@ with:
 - `frontend`: Frontend choice - Next (`next`) or Nuxt (`nuxt`). Optional field. Defaults to `next`.
 - `docker_registry_url`: URL to the Docker image registry. Optional field. Defaults to `registry.vuestorefront.cloud`.
 - `npm_registry`: URL to the private NPM registry. Optional field. Defaults to `https://registrynpm.storefrontcloud.io`.
-- `api_base_url`: Hostname (URL part) for Middleware. Optional field. The default value is composed of the Console project name, region, and VSF Cloud domain.
-- `api_subpath`: Subpath to the Middleware. Optional field. Default value: `/api`.
-- `api_protocol`: Communication protocol between frontend and Middleware. Optional field. Default value: `https`.
-- multistore_enabled: Switch to enable Multistore support on the frontend side. Optional field. Default value: `false`.
+- `api_base_url`: URL for Middleware. Optional field. The default value is composed of the Console project name, region, VSF Cloud domain, and the default subpath which is `/api`.
 - `image_provider`: Switch the image provider on the Nuxt frontend. More details in the [Nuxt image docs](https://image.nuxt.com/get-started/providers). Know the differences between the Nuxt & Next image modules and their configuration. Optional field. The default value is undefined because Nuxt automatically falls back to `ipx`
 - `image_provider_upload_url`: URL for uploading images to the selected image provider (e.g., Cloudinary). Do not set this value if you are not using any image provider. Any value here will attempt to run the module in the frontend code, resulting in an error and frontend unavailability. Optional field.
 - `image_provider_fetch_url`: URL for fetching images from the selected image provider. Optional field.
