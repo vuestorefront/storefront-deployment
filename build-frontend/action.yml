@@ -35,20 +35,12 @@ inputs:
     required: false
     default: 'https://registrynpm.storefrontcloud.io'
   api_base_url:
-    description: 'Base Middleware API URL for Storefront. By default project_name.region.gcp.storefrontcloud.io'
+    description: 'Base Middleware API URL for Storefront. By default https://project_name.region.gcp.storefrontcloud.io/api'
     required: false
-  api_subpath:
-    description: 'Middleware Subpath for Storefront'
-    required: false
-    default: '/api'
-  api_protocol:
-    description: 'Protocol for communication with Middleware'
-    required: false
-    default: 'https'
   multistore_enabled:
     description: 'Switch for multistore'
     required: false
-    default: "false"
+    default: 'false'
   image_provider:
     description: 'Image provider name'
     required: false
@@ -59,7 +51,7 @@ inputs:
     description: 'Image Provider fetch url'
     required: false
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Setup node
       uses: actions/setup-node@v3
@@ -75,15 +67,13 @@ runs:
         password: ${{ inputs.cloud_password }}
         dockerfile: .vuestorefrontcloud/docker/nextjs/Dockerfile-frontend
         buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NEXT_PUBLIC_API_BASE_URL,NEXT_PUBLIC_API_SUBPATH,NEXT_PUBLIC_API_PROTOCOL,NEXT_PUBLIC_IS_MULTISTORE_ENABLED,NEXT_IMAGE_PROVIDER,NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL
+        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NEXT_PUBLIC_API_BASE_URL,NEXT_PUBLIC_IS_MULTISTORE_ENABLED,NEXT_IMAGE_PROVIDER,NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
         NPM_REGISTRY: ${{ inputs.npm_registry }}
-        NEXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url || format('{0}.{1}.{2}', inputs.project_name, inputs.cloud_region, 'gcp.storefrontcloud.io') }}
-        NEXT_PUBLIC_API_SUBPATH: ${{ inputs.api_subpath }}
-        NEXT_PUBLIC_API_PROTOCOL: ${{ inputs.api_protocol }}
+        NEXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url || format('https://{0}.{1}.{2}/api', inputs.project_name, inputs.cloud_region, 'gcp.storefrontcloud.io') }}
         NEXT_PUBLIC_IS_MULTISTORE_ENABLED: ${{ inputs.multistore_enabled }}
         NEXT_IMAGE_PROVIDER: ${{ inputs.image_provider }}
         NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL: ${{ inputs.image_provider_upload_url }}
@@ -104,9 +94,7 @@ runs:
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
         NPM_REGISTRY: ${{ inputs.npm_registry }}
-        NUXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url || format('{0}.{1}.{2}', inputs.project_name, inputs.cloud_region, 'gcp.storefrontcloud.io') }}
-        NUXT_PUBLIC_API_SUBPATH: ${{ inputs.api_subpath }}
-        NUXT_PUBLIC_API_PROTOCOL: ${{ inputs.api_protocol }}
+        NUXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url || format('https://{0}.{1}.{2}/api', inputs.project_name, inputs.cloud_region, 'gcp.storefrontcloud.io') }}
         NUXT_PUBLIC_IS_MULTISTORE_ENABLED: ${{ inputs.multistore_enabled }}
         NUXT_IMAGE_PROVIDER: ${{ inputs.image_provider }}
         NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL: ${{ inputs.image_provider_upload_url }}
