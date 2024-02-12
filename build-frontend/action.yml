@@ -67,14 +67,14 @@ runs:
         password: ${{ inputs.cloud_password }}
         dockerfile: .vuestorefrontcloud/docker/nextjs/Dockerfile-frontend
         buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NEXT_PUBLIC_API_BASE_URL,NEXT_PUBLIC_IS_MULTISTORE_ENABLED,NEXT_IMAGE_PROVIDER,NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL
+        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NEXT_PUBLIC_API_BASE_URL,NEXT_PUBLIC_MULTISTORE_ENABLED,NEXT_IMAGE_PROVIDER,NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
         NPM_REGISTRY: ${{ inputs.npm_registry }}
         NEXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url || format('https://{0}.{1}.{2}/api', inputs.project_name, inputs.cloud_region, 'gcp.storefrontcloud.io') }}
-        NEXT_PUBLIC_IS_MULTISTORE_ENABLED: ${{ inputs.multistore_enabled }}
+        NEXT_PUBLIC_MULTISTORE_ENABLED: ${{ inputs.multistore_enabled }}
         NEXT_IMAGE_PROVIDER: ${{ inputs.image_provider }}
         NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL: ${{ inputs.image_provider_upload_url }}
         NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL: ${{ inputs.image_provider_fetch_url }}
@@ -88,14 +88,14 @@ runs:
         password: ${{ inputs.cloud_password }}
         dockerfile: .vuestorefrontcloud/docker/nuxtjs/Dockerfile-frontend
         buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NUXT_PUBLIC_API_BASE_URL,NUXT_PUBLIC_API_SUBPATH,NUXT_PUBLIC_API_PROTOCOL,NUXT_PUBLIC_IS_MULTISTORE_ENABLED,NUXT_IMAGE_PROVIDER,NUXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL
+        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NUXT_PUBLIC_API_BASE_URL,NUXT_PUBLIC_MULTISTORE_ENABLED,NUXT_IMAGE_PROVIDER,NUXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
         NPM_REGISTRY: ${{ inputs.npm_registry }}
         NUXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url || format('https://{0}.{1}.{2}/api', inputs.project_name, inputs.cloud_region, 'gcp.storefrontcloud.io') }}
-        NUXT_PUBLIC_IS_MULTISTORE_ENABLED: ${{ inputs.multistore_enabled }}
+        NUXT_PUBLIC_MULTISTORE_ENABLED: ${{ inputs.multistore_enabled }}
         NUXT_IMAGE_PROVIDER: ${{ inputs.image_provider }}
         NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL: ${{ inputs.image_provider_upload_url }}
         NUXT_PUBLIC_IMAGE_LOADER_FETCH_URL: ${{ inputs.image_provider_fetch_url }}
