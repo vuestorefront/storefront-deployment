@@ -32,6 +32,8 @@ with:
   image_provider: 'ipx'
   image_provider_upload_url: ${{ secrets.IMAGE_PROVIDER_UPLOAD_URL }}
   image_provider_fetch_url: ${{ secrets.IMAGE_PROVIDER_FETCH_URL }}
+  coveo_organization_id: ${{ secrets.NEXT_PUBLIC_COVEO_ORGANIZATION_ID }}
+  coveo_access_token: ${{ secrets.NEXT_PUBLIC_COVEO_ACCESS_TOKEN }}
 ```
 
 **Input Parameters:**
@@ -50,6 +52,8 @@ with:
 - `image_provider`: Switch the image provider on the Nuxt frontend. More details in the [Nuxt image docs](https://image.nuxt.com/get-started/providers). Know the differences between the Nuxt & Next image modules and their configuration. Optional field. The default value is undefined because Nuxt automatically falls back to `ipx`
 - `image_provider_upload_url`: URL for uploading images to the selected image provider (e.g., Cloudinary). Do not set this value if you are not using any image provider. Any value here will attempt to run the module in the frontend code, resulting in an error and frontend unavailability. Optional field.
 - `image_provider_fetch_url`: URL for fetching images from the selected image provider. Optional field.
+- `coveo_organization_id`: Coveo organization ID required for coveo integration. Optional field.
+- `coveo_access_token`: Coveo organization access token required for coveo integration. Optional field.
 
 ### build-middleware
 
