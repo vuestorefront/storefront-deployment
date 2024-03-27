@@ -64,7 +64,7 @@ runs:
       with:
         node-version: 18.x
     - name: Build and publish docker image (Next.js frontend)
-      if: ${{ inputs.frontend == 'next' }}
+      if: ${{ inputs.frontend == 'next' || inputs.frontend == 'nextjs' }}
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
         name: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront:${{ github.sha }}
