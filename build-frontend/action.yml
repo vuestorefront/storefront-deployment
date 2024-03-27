@@ -56,6 +56,9 @@ inputs:
   coveo_access_token:
     description: 'Coveo access token'
     required: false
+  version:
+    description: 'Version of the app'
+    required: false
 runs:
   using: 'composite'
   steps:
@@ -67,7 +70,7 @@ runs:
       if: ${{ inputs.frontend == 'next' || inputs.frontend == 'nextjs' }}
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
-        name: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront:${{ github.sha }}
+        name: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront:${{ inputs.version || github.sha }}
         registry: ${{ inputs.docker_registry_url }}
         username: ${{ inputs.cloud_username }}
         password: ${{ inputs.cloud_password }}
@@ -90,7 +93,7 @@ runs:
       if: ${{ inputs.frontend == 'nuxt' }}
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
-        name: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront:${{ github.sha }}
+        name: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront:${{ inputs.version || github.sha }}
         registry: ${{ inputs.docker_registry_url }}
         username: ${{ inputs.cloud_username }}
         password: ${{ inputs.cloud_password }}

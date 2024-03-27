@@ -27,6 +27,9 @@ inputs:
     description: 'NPM registry'
     required: false
     default: 'https://registrynpm.storefrontcloud.io'
+  version:
+    description: 'Version of the app'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -46,12 +49,12 @@ runs:
         registry: ${{ inputs.docker_registry_url }}
         auth: "Basic ${{ steps.base64-auth.outputs.BASIC_AUTH_TOKEN }}"
         repository: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront-middleware
-        tag: ${{ github.sha }}
+        tag: ${{ inputs.version || github.sha }}
     - name: Build and publish docker image (middleware)
       uses: elgohr/Publish-Docker-Github-Action@v5
       if: ${{ steps.check-existing-image.outputs.exists == 'false' }}
       with:
-        name: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront-middleware:${{ github.sha }}
+        name: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront-middleware:${{ inputs.version || github.sha }}
         registry: ${{ inputs.docker_registry_url }}
         username: ${{ inputs.cloud_username }}
         password: ${{ inputs.cloud_password }}
