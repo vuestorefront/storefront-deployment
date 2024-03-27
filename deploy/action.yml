@@ -21,6 +21,9 @@ inputs:
     description: 'URI for Vue Storefront Console API'
     required: false
     default: 'https://api.platform.vuestorefront.io'
+  version:
+    description: 'Version of the app'
+    required: false
 
 runs:
   using: "composite"
@@ -40,7 +43,7 @@ runs:
         url: "${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy"
         method: "PATCH"
         customHeaders: '{"Content-Type":"application/json"}'
-        data: '{ "cloudUserId":"${{ inputs.cloud_username }}", "cloudUserPassword":"${{ inputs.cloud_password }}", "dockerImageHash":"${{ github.sha }}" }'
+        data: '{ "cloudUserId":"${{ inputs.cloud_username }}", "cloudUserPassword":"${{ inputs.cloud_password }}", "dockerImageHash":"${{ inputs.version || github.sha }}" }'
         timeout: 60000
 
     - name: Deploy Middleware (${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io)
@@ -49,7 +52,7 @@ runs:
         url: "${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy"
         method: "PATCH"
         customHeaders: '{"Content-Type":"application/json"}'
-        data: '{ "middleware":true, "cloudUserId":"${{ inputs.cloud_username }}", "cloudUserPassword":"${{ inputs.cloud_password }}", "dockerImageHash":"${{ github.sha }}", "middlewareData":{ "path":"/api/", "port":4000, "has_base_path":false } }'
+        data: '{ "middleware":true, "cloudUserId":"${{ inputs.cloud_username }}", "cloudUserPassword":"${{ inputs.cloud_password }}", "dockerImageHash":"${{ inputs.version || github.sha }}", "middlewareData":{ "path":"/api/", "port":4000, "has_base_path":false } }'
         timeout: 60000
 
     - name: Update deployment status (success)
