@@ -34,6 +34,7 @@ with:
   image_provider_fetch_url: ${{ secrets.IMAGE_PROVIDER_FETCH_URL }}
   coveo_organization_id: ${{ secrets.NEXT_PUBLIC_COVEO_ORGANIZATION_ID }}
   coveo_access_token: ${{ secrets.NEXT_PUBLIC_COVEO_ACCESS_TOKEN }}
+  version: 2.3.0
 ```
 
 **Input Parameters:**
@@ -54,6 +55,7 @@ with:
 - `image_provider_fetch_url`: URL for fetching images from the selected image provider. Optional field.
 - `coveo_organization_id`: Coveo organization ID required for coveo integration. Optional field.
 - `coveo_access_token`: Coveo organization access token required for coveo integration. Optional field.
+- `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used 
 
 ### build-middleware
 
@@ -68,6 +70,7 @@ with:
   npm_pass: ${{ secrets.NPM_PASS }}
   docker_registry_url: 'registry.vuestorefront.cloud'
   npm_registry: 'https://registrynpm.storefrontcloud.io'
+  version: 2.3.0
 ```
 
 **Input Parameters:**
@@ -80,6 +83,7 @@ with:
 - `npm_pass`: Password for the private NPM registry. Required field.
 - `docker_registry_url`: URL to the Docker image registry. Optional field. Defaults to `registry.vuestorefront.cloud`.
 - `npm_registry`: URL to the private NPM registry. Optional field. Defaults to `https://registrynpm.storefrontcloud.io`.
+- `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used 
 
 ### deploy
 
@@ -92,6 +96,7 @@ with:
   cloud_region: ${{ secrets.CLOUD_REGION }}
   docker_registry_url: 'registry.vuestorefront.cloud'
   console_api: 'https://api.platform.vuestorefront.io'
+  version: 2.3.0
 ```
 
 **Input Parameters:**
@@ -102,3 +107,4 @@ with:
 - `cloud_region`: Region where the environment is set up in the Console. Required field.
 - `docker_registry_url`: URL to the Docker image registry. Optional field. Defaults to `registry.vuestorefront.cloud`.
 - `console_api_url`: URL to the Console. Optional field. Defaults to `https://api.platform.vuestorefront.io`.
+- `version`: Docker image tag that will be deployed. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used 
