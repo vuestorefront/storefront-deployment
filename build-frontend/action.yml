@@ -2,71 +2,83 @@ name: Build Frontend
 description: Builds Storefront app docker image
 inputs:
   frontend:
-    description: 'Switch between Next.js and Nuxt'
+    description: "Switch between Next.js and Nuxt"
     required: false
-    default: 'next'
+    default: "next"
   project_name:
-    description: 'Project name'
+    description: "Project name"
     required: true
   docker_registry_url:
-    description: 'Docker registry url'
+    description: "Docker registry url"
     required: false
-    default: 'registry.vuestorefront.cloud'
+    default: "registry.storefrontcloud.io"
+  docker_registry_ref:
+    description: "Docker registry reference"
+    required: true
   cloud_username:
-    description: 'Cloud username'
+    description: "Cloud username"
     required: true
   cloud_password:
-    description: 'Cloud password'
+    description: "Cloud password"
     required: true
   cloud_region:
-    description: 'Cloud region'
+    description: "Cloud region"
     required: true
   npm_email:
-    description: 'NPM email'
+    description: "NPM email"
     required: true
   npm_pass:
-    description: 'NPM password'
+    description: "NPM password"
     required: true
   npm_user:
-    description: 'NPM user'
+    description: "NPM user"
     required: true
   npm_registry:
-    description: 'NPM registry'
+    description: "NPM registry"
     required: false
-    default: 'https://registrynpm.storefrontcloud.io'
+    default: "https://registrynpm.storefrontcloud.io"
   api_base_url:
-    description: 'Base Middleware API URL for Storefront. By default https://project_name.region.gcp.storefrontcloud.io/api'
+    description: "Base Middleware API URL for Storefront. By default https://project_name.region.gcp.storefrontcloud.io/api"
     required: false
   multistore_enabled:
-    description: 'Switch for multistore'
+    description: "Switch for multistore"
     required: false
-    default: 'false'
+    default: "false"
   image_provider:
-    description: 'Image provider name'
+    description: "Image provider name"
     required: false
   image_provider_upload_url:
-    description: 'Image Provider upload url'
+    description: "Image Provider upload url"
     required: false
   image_provider_fetch_url:
-    description: 'Image Provider fetch url'
+    description: "Image Provider fetch url"
     required: false
   coveo_organization_id:
-    description: 'Coveo organization id'
+    description: "Coveo organization id"
     required: false
   coveo_access_token:
-    description: 'Coveo access token'
+    description: "Coveo access token"
     required: false
   version:
-    description: 'Version of the app'
+    description: "Version of the app"
     required: false
+
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-    - name: Setup node
-      uses: actions/setup-node@v3
+    # Need buildx for caching
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login Alokai Docker Registry
+      uses: docker/login-action@v3
       with:
-        node-version: 18.x
-    - name: Build and publish docker image (Next.js frontend)
+        registry: ${{ inputs.docker_registry_url }}
+        username: ${{ inputs.npm_user }}
+        password: ${{ inputs.npm_pass }}
+
+    - name: Build and push image (Next.js frontend)
       if: ${{ inputs.frontend == 'next' || inputs.frontend == 'nextjs' }}
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
@@ -89,26 +101,28 @@ runs:
         NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL: ${{ inputs.image_provider_fetch_url }}
         NEXT_PUBLIC_COVEO_ORGANIZATION_ID: ${{ inputs.coveo_organization_id }}
         NEXT_PUBLIC_COVEO_ACCESS_TOKEN: ${{ inputs.coveo_access_token }}
-    - name: Build and publish docker image (Nuxt frontend)
+
+    - name: Build and push
       if: ${{ inputs.frontend == 'nuxt' }}
-      uses: elgohr/Publish-Docker-Github-Action@v5
+      uses: docker/build-push-action@v5
       with:
-        name: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront:${{ inputs.version || github.sha }}
-        registry: ${{ inputs.docker_registry_url }}
-        username: ${{ inputs.cloud_username }}
-        password: ${{ inputs.cloud_password }}
-        dockerfile: .vuestorefrontcloud/docker/nuxtjs/Dockerfile-frontend
-        buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NUXT_PUBLIC_API_BASE_URL,NUXT_PUBLIC_MULTISTORE_ENABLED,NUXT_IMAGE_PROVIDER,NUXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL,NUXT_PUBLIC_COVEO_ORGANIZATION_ID,NUXT_PUBLIC_COVEO_ACCESS_TOKEN
+        context: .
+        file: .vuestorefrontcloud/docker/nuxtjs/Dockerfile-frontend
+        push: true
+        tags: ${{ inputs.docker_registry_ref }}/vue-storefront:${{ github.sha }}
+        # Inline cache
+        cache-from: "type=registry,ref=${{ inputs.docker_registry_ref }}/vue-storefront:${{ inputs.project_name }}-buildcache"
+        cache-to: "type=registry,ref=${{ inputs.docker_registry_ref }}/vue-storefront:${{ inputs.project_name }}-buildcache,mode=max"
+        build-args: |
+          NPM_EMAIL=${{ inputs.npm_email }}
+          NPM_PASS=${{ inputs.npm_pass }}
+          NPM_USER=${{ inputs.npm_user }}
+          NPM_REGISTRY=https://registrynpm.storefrontcloud.io
+          NUXT_PUBLIC_API_BASE_URL: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io/api/
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
-        NPM_REGISTRY: ${{ inputs.npm_registry }}
-        NUXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url || format('https://{0}.{1}.{2}/api', inputs.project_name, inputs.cloud_region, 'gcp.storefrontcloud.io') }}
-        NUXT_PUBLIC_MULTISTORE_ENABLED: ${{ inputs.multistore_enabled }}
-        NUXT_IMAGE_PROVIDER: ${{ inputs.image_provider }}
-        NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL: ${{ inputs.image_provider_upload_url }}
-        NUXT_PUBLIC_IMAGE_LOADER_FETCH_URL: ${{ inputs.image_provider_fetch_url }}
-        NUXT_PUBLIC_COVEO_ORGANIZATION_ID: ${{ inputs.coveo_organization_id }}
-        NUXT_PUBLIC_COVEO_ACCESS_TOKEN: ${{ inputs.coveo_access_token }}
+        NPM_REGISTRY: https://registrynpm.storefrontcloud.io
+        NUXT_PUBLIC_API_BASE_URL: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io/api/
+
