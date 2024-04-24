@@ -2,66 +2,77 @@ name: Deploy Storefront
 description: Builds Middleware app docker image
 inputs:
   project_name:
-    description: 'Project name'
+    description: "Project name"
     required: true
   docker_registry_url:
-    description: 'Docker registry url'
+    description: "Docker registry url"
     required: false
-    default: 'registry.vuestorefront.cloud'
+    default: "registry.vuestorefront.cloud"
   cloud_username:
-    description: 'Cloud username'
+    description: "Cloud username"
     required: true
   cloud_password:
-    description: 'Cloud password'
+    description: "Cloud password"
     required: true
   cloud_region:
-    description: 'Cloud region'
+    description: "Cloud region"
     required: true
   console_api_url:
-    description: 'URI for Vue Storefront Console API'
+    description: "URI for Vue Storefront Console API"
     required: false
-    default: 'https://api.platform.vuestorefront.io'
+    default: "https://api.platform.vuestorefront.io"
   version:
-    description: 'Version of the app'
-    required: false
+    description: "Version of the app"
+    required: true
 
 runs:
   using: "composite"
   steps:
-    - uses: chrnorm/deployment-action@releases/v2
+
+    - uses: chrnorm/deployment-action@v2
       name: Create GitHub deployment
       id: deployment
       with:
-        token: '${{ github.token }}'
+        token: "${{ github.token }}"
         environment-url: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
-        environment: production
         initial-status: in_progress
 
-    - name: Deploy Frontend App (${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io)
-      uses: fjogeleit/http-request-action@v1
-      with:
-        url: "${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy"
-        method: "PATCH"
-        customHeaders: '{"Content-Type":"application/json"}'
-        data: '{ "cloudUserId":"${{ inputs.cloud_username }}", "cloudUserPassword":"${{ inputs.cloud_password }}", "dockerImageHash":"${{ inputs.version || github.sha }}" }'
-        timeout: 60000
-
-    - name: Deploy Middleware (${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io)
-      uses: fjogeleit/http-request-action@v1
-      with:
-        url: "${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy"
-        method: "PATCH"
-        customHeaders: '{"Content-Type":"application/json"}'
-        data: '{ "middleware":true, "cloudUserId":"${{ inputs.cloud_username }}", "cloudUserPassword":"${{ inputs.cloud_password }}", "dockerImageHash":"${{ inputs.version || github.sha }}", "middlewareData":{ "path":"/api/", "port":4000, "has_base_path":false } }'
-        timeout: 60000
-
+    - name: Deploy on ${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
+      shell: bash
+      run: |
+        tmpfile=$(mktemp /tmp/farmer-output.XXXXXXX)
+        FARMERCODE=$(curl --write-out '%{http_code}' --silent --output "$tmpfile" \
+        -H 'Content-Type: application/json' \
+        -X PATCH -d '{
+          "cloudUserId": "${{ inputs.cloud_username }}",
+          "cloudUserPassword": "${{ inputs.cloud_password }}",
+          "dockerImageHash": "${{ inputs.version }}",
+          "middlewareData": {
+            "path": "/api/",
+            "port": 4000,
+            "has_base_path": false,
+            "health_check": {
+              "enabled": true,
+              "path": "/healthz"
+            }
+          }
+        }' https://api.console.vuestorefront.io/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy)
+        cat "$tmpfile"
+        rm "$tmpfile"
+        if [[ $FARMERCODE -lt 400 && $FARMERCODE -ge 200 ]]
+        then
+            echo "farmer deploy: SUCCESS";
+        else
+            echo "farmer deploy FAILED ❌ with code $FARMERCODE";
+            exit 1;
+        fi
     - name: Update deployment status (success)
       if: success()
       uses: chrnorm/deployment-status@releases/v2
       with:
-        token: '${{ github.token }}'
+        token: "${{ github.token }}"
         environment-url: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
-        state: 'success'
+        state: "success"
         description: Congratulations! The deploy is done.
         deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
@@ -69,8 +80,9 @@ runs:
       if: failure()
       uses: chrnorm/deployment-status@releases/v2
       with:
-        token: '${{ github.token }}'
+        token: "${{ github.token }}"
         environment-url: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
         description: Unfortunately, the instance hasn't been updated.
-        state: 'failure'
+        state: "failure"
         deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+
