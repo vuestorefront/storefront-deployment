@@ -32,7 +32,8 @@ inputs:
     default: 'https://registrynpm.storefrontcloud.io'
   version:
     description: 'Version of the app'
-    required: false
+    required: true
+
 runs:
   using: "composite"
   steps:
@@ -48,41 +49,13 @@ runs:
         username: ${{ inputs.npm_user }}
         password: ${{ inputs.npm_pass }}
 
-    - name: Setup node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18.x
-
-    - name: Encode Basic Auth
-      id: base64-auth
-      shell: bash
-      run: |
-        echo "BASIC_AUTH_TOKEN=$(echo -n ${{ inputs.cloud_username }}:${{ inputs.cloud_password }} | base64 -w 0)" >> "$GITHUB_OUTPUT"
-
-    - name: Build and publish docker image (middleware)
-      uses: elgohr/Publish-Docker-Github-Action@v5
-      if: ${{ steps.check-existing-image.outputs.exists == 'false' }}
-      with:
-        name: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront-middleware:${{ inputs.version || github.sha }}
-        registry: ${{ inputs.docker_registry_url }}
-        username: ${{ inputs.cloud_username }}
-        password: ${{ inputs.cloud_password }}
-        dockerfile: .vuestorefrontcloud/docker/middleware/Dockerfile-middleware
-        buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY
-      env:
-        NPM_EMAIL: ${{ inputs.npm_email }}
-        NPM_PASS: ${{ inputs.npm_pass }}
-        NPM_USER: ${{ inputs.npm_user }}
-        NPM_REGISTRY: ${{ inputs.npm_registry }}
-
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
         context: .
         file: .vuestorefrontcloud/docker/middleware/Dockerfile-middleware
         push: true
-        tags: ${{ inputs.docker_registry_ref }}/vue-storefront-middleware:${{ github.sha }}
+        tags: ${{ inputs.docker_registry_ref }}/vue-storefront-middleware:${{ inputs.version }}
         # Inline cache
         cache-from: "type=registry,ref=${{ inputs.docker_registry_ref }}/vue-storefront-middleware:${{ inputs.project_name }}-buildcache"
         cache-to: "type=registry,ref=${{ inputs.docker_registry_ref }}/vue-storefront-middleware:${{ inputs.project_name }}-buildcache,mode=max"

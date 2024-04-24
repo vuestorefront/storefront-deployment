@@ -61,7 +61,7 @@ inputs:
     required: false
   version:
     description: "Version of the app"
-    required: false
+    required: true
 
 runs:
   using: "composite"
@@ -80,15 +80,28 @@ runs:
 
     - name: Build and push image (Next.js frontend)
       if: ${{ inputs.frontend == 'next' || inputs.frontend == 'nextjs' }}
-      uses: elgohr/Publish-Docker-Github-Action@v5
+      uses: docker/build-push-action@v5
       with:
-        name: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront:${{ inputs.version || github.sha }}
-        registry: ${{ inputs.docker_registry_url }}
-        username: ${{ inputs.cloud_username }}
-        password: ${{ inputs.cloud_password }}
-        dockerfile: .vuestorefrontcloud/docker/nextjs/Dockerfile-frontend
-        buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NEXT_PUBLIC_API_BASE_URL,NEXT_PUBLIC_MULTISTORE_ENABLED,NEXT_IMAGE_PROVIDER,NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL,NEXT_PUBLIC_COVEO_ORGANIZATION_ID,NEXT_PUBLIC_COVEO_ACCESS_TOKEN
+        context: .
+        file: .vuestorefrontcloud/docker/nextjs/Dockerfile-frontend
+        push: true
+        tags: ${{ inputs.docker_registry_ref }}/vue-storefront:${{ inputs.version }}
+        # Inline cache
+        cache-from: "type=registry,ref=${{ inputs.docker_registry_ref }}/vue-storefront:${{ inputs.project_name }}-buildcache"
+        cache-to: "type=registry,ref=${{ inputs.docker_registry_ref }}/vue-storefront:${{ inputs.project_name }}-buildcache,mode=max"
+        build-args: |
+          NPM_EMAIL=${{ inputs.npm_email }}
+          NPM_PASS=${{ inputs.npm_pass }}
+          NPM_USER=${{ inputs.npm_user }}
+          NPM_REGISTRY=https://registrynpm.storefrontcloud.io
+          NEXT_PUBLIC_API_BASE_URL=${{ inputs.api_base_url || format('https://{0}.{1}.{2}/api', inputs.project_name, inputs.cloud_region, 'gcp.storefrontcloud.io') }}
+          NEXT_PUBLIC_MULTISTORE_ENABLED=${{ inputs.multistore_enabled }}
+          NEXT_IMAGE_PROVIDER=${{ inputs.image_provider }}
+          NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL=${{ inputs.image_provider_upload_url }}
+          NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL=${{ inputs.image_provider_fetch_url }}
+          NEXT_PUBLIC_COVEO_ORGANIZATION_ID=${{ inputs.coveo_organization_id }}
+          NEXT_PUBLIC_COVEO_ACCESS_TOKEN=${{ inputs.coveo_access_token }}
+
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
@@ -109,7 +122,7 @@ runs:
         context: .
         file: .vuestorefrontcloud/docker/nuxtjs/Dockerfile-frontend
         push: true
-        tags: ${{ inputs.docker_registry_ref }}/vue-storefront:${{ github.sha }}
+        tags: ${{ inputs.docker_registry_ref }}/vue-storefront:${{ inputs.version }}
         # Inline cache
         cache-from: "type=registry,ref=${{ inputs.docker_registry_ref }}/vue-storefront:${{ inputs.project_name }}-buildcache"
         cache-to: "type=registry,ref=${{ inputs.docker_registry_ref }}/vue-storefront:${{ inputs.project_name }}-buildcache,mode=max"
@@ -118,11 +131,12 @@ runs:
           NPM_PASS=${{ inputs.npm_pass }}
           NPM_USER=${{ inputs.npm_user }}
           NPM_REGISTRY=https://registrynpm.storefrontcloud.io
-          NUXT_PUBLIC_API_BASE_URL: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io/api/
+          NUXT_PUBLIC_API_BASE_URL=https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io/api/
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
         NPM_REGISTRY: https://registrynpm.storefrontcloud.io
         NUXT_PUBLIC_API_BASE_URL: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io/api/
+
 
