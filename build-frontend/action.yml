@@ -132,11 +132,24 @@ runs:
           NPM_USER=${{ inputs.npm_user }}
           NPM_REGISTRY=https://registrynpm.storefrontcloud.io
           NUXT_PUBLIC_API_BASE_URL=https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io/api/
+          NUXT_PUBLIC_MULTISTORE_ENABLED=${{ inputs.multistore_enabled }}
+          NUXT_IMAGE_PROVIDER=${{ inputs.image_provider }}
+          NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL=${{ inputs.image_provider_upload_url }}
+          NUXT_PUBLIC_IMAGE_LOADER_FETCH_URL=${{ inputs.image_provider_fetch_url }}
+          NUXT_PUBLIC_COVEO_ORGANIZATION_ID=${{ inputs.coveo_organization_id }}
+          NUXT_PUBLIC_COVEO_ACCESS_TOKEN=${{ inputs.coveo_access_token }}
+
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
         NPM_REGISTRY: https://registrynpm.storefrontcloud.io
         NUXT_PUBLIC_API_BASE_URL: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io/api/
+        NUXT_PUBLIC_MULTISTORE_ENABLED: ${{ inputs.multistore_enabled }}
+        NUXT_IMAGE_PROVIDER: ${{ inputs.image_provider }}
+        NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL: ${{ inputs.image_provider_upload_url }}
+        NUXT_PUBLIC_IMAGE_LOADER_FETCH_URL: ${{ inputs.image_provider_fetch_url }}
+        NUXT_PUBLIC_COVEO_ORGANIZATION_ID: ${{ inputs.coveo_organization_id }}
+        NUXT_PUBLIC_COVEO_ACCESS_TOKEN: ${{ inputs.coveo_access_token }}
 
 
