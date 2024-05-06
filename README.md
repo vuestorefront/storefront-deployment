@@ -35,6 +35,7 @@ with:
   coveo_organization_id: ${{ secrets.NEXT_PUBLIC_COVEO_ORGANIZATION_ID }}
   coveo_access_token: ${{ secrets.NEXT_PUBLIC_COVEO_ACCESS_TOKEN }}
   version: 2.3.0
+  default_html_cache_control:  ${{ vars.DEFAULT_HTML_CACHE_CONTROL || 'public, max-age=0, s-maxage=0, must-revalidate' }}
 ```
 
 **Input Parameters:**
