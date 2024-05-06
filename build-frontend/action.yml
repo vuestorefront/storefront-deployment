@@ -61,7 +61,8 @@ inputs:
     required: false
   default_html_cache_control:
     description: 'Default cache control header value for SSR pages'
-    required: true
+    required: false
+    default: 'public, max-age=0, s-maxage=15, must-revalidate'
 runs:
   using: 'composite'
   steps:

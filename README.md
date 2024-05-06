@@ -56,7 +56,7 @@ with:
 - `coveo_organization_id`: Coveo organization ID required for coveo integration. Optional field.
 - `coveo_access_token`: Coveo organization access token required for coveo integration. Optional field.
 - `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used 
-
+- `default_html_cache_control`: Default cache control header value for SSR pages. If not passed, `public, max-age=0, s-maxage=15, must-revalidate` will be used.
 ### build-middleware
 
 ```yaml
