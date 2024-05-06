@@ -59,6 +59,10 @@ inputs:
   version:
     description: 'Version of the app'
     required: false
+  default_html_cache_control:
+    description: 'Default cache control header value for SSR pages'
+    required: false
+    default: 'public, max-age=0, s-maxage=15, must-revalidate'
 runs:
   using: 'composite'
   steps:
@@ -76,7 +80,7 @@ runs:
         password: ${{ inputs.cloud_password }}
         dockerfile: .vuestorefrontcloud/docker/nextjs/Dockerfile-frontend
         buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NEXT_PUBLIC_API_BASE_URL,NEXT_PUBLIC_MULTISTORE_ENABLED,NEXT_IMAGE_PROVIDER,NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL,NEXT_PUBLIC_COVEO_ORGANIZATION_ID,NEXT_PUBLIC_COVEO_ACCESS_TOKEN
+        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NEXT_PUBLIC_API_BASE_URL,NEXT_PUBLIC_MULTISTORE_ENABLED,NEXT_IMAGE_PROVIDER,NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL,NEXT_PUBLIC_COVEO_ORGANIZATION_ID,NEXT_PUBLIC_COVEO_ACCESS_TOKEN,NEXT_DEFAULT_HTML_CACHE_CONTROL
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
@@ -89,6 +93,7 @@ runs:
         NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL: ${{ inputs.image_provider_fetch_url }}
         NEXT_PUBLIC_COVEO_ORGANIZATION_ID: ${{ inputs.coveo_organization_id }}
         NEXT_PUBLIC_COVEO_ACCESS_TOKEN: ${{ inputs.coveo_access_token }}
+        NEXT_DEFAULT_HTML_CACHE_CONTROL: ${{ inputs.default_html_cache_control }}
     - name: Build and publish docker image (Nuxt frontend)
       if: ${{ inputs.frontend == 'nuxt' }}
       uses: elgohr/Publish-Docker-Github-Action@v5
