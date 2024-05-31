@@ -73,6 +73,7 @@ runs:
     - name: Set dynamic NEXT_PUBLIC_* environment variables
       id: set-public-env-vars-next
       if: ${{ inputs.frontend == 'next' || inputs.frontend == 'nextjs' }}
+      shell: bash
       run: |
         # Collect all NEXT_PUBLIC_* variables
         NEXT_PUBLIC_VARS=$(printenv | grep '^NEXT_PUBLIC_' | awk -F= '{print "--build-arg " $1 "=" $2}' | tr '\n' ' ')
@@ -84,6 +85,7 @@ runs:
     - name: Set dynamic NUXT_PUBLIC_* environment variables
       id: set-public-env-vars-nuxt
       if: ${{ inputs.frontend == 'nuxt' }}
+      shell: bash
       run: |
         # Collect all NUXT_PUBLIC_* variables
         NEXT_PUBLIC_VARS=$(printenv | grep '^NUXT_PUBLIC_' | awk -F= '{print "--build-arg " $1 "=" $2}' | tr '\n' ' ')
