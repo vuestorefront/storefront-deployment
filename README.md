@@ -56,8 +56,10 @@ with:
 - `image_provider_fetch_url`: URL for fetching images from the selected image provider. Optional field.
 - `coveo_organization_id`: Coveo organization ID required for coveo integration. Optional field.
 - `coveo_access_token`: Coveo organization access token required for coveo integration. Optional field.
-- `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used 
+- `coveo_tracking_id`: Coveo tracking id required for coveo integration. Optional field.
+- `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used
 - `default_html_cache_control`: Default cache control header value for SSR pages. If not passed, `public, max-age=0, s-maxage=15, must-revalidate` will be used.
+
 ### build-middleware
 
 ```yaml
@@ -84,7 +86,7 @@ with:
 - `npm_pass`: Password for the private NPM registry. Required field.
 - `docker_registry_url`: URL to the Docker image registry. Optional field. Defaults to `registry.vuestorefront.cloud`.
 - `npm_registry`: URL to the private NPM registry. Optional field. Defaults to `https://registrynpm.storefrontcloud.io`.
-- `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used 
+- `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used
 
 ### deploy
 
@@ -108,4 +110,4 @@ with:
 - `cloud_region`: Region where the environment is set up in the Console. Required field.
 - `docker_registry_url`: URL to the Docker image registry. Optional field. Defaults to `registry.vuestorefront.cloud`.
 - `console_api_url`: URL to the Console. Optional field. Defaults to `https://api.platform.vuestorefront.io`.
-- `version`: Docker image tag that will be deployed. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used 
+- `version`: Docker image tag that will be deployed. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used
