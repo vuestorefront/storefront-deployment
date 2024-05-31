@@ -1,5 +1,5 @@
 name: Deploy Storefront
-description: Builds Middleware app docker image
+description: Deploy Storefront and Middleware app docker images
 inputs:
   project_name:
     description: 'Project name'
