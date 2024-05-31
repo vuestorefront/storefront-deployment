@@ -70,6 +70,28 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: 18.x
+    - name: Set dynamic NEXT_PUBLIC_* environment variables
+      id: set-public-env-vars-next
+      if: ${{ inputs.frontend == 'next' || inputs.frontend == 'nextjs' }}
+      run: |
+        # Collect all NEXT_PUBLIC_* variables
+        NEXT_PUBLIC_VARS=$(printenv | grep '^NEXT_PUBLIC_' | awk -F= '{print "--build-arg " $1 "=" $2}' | tr '\n' ' ')
+        # Collect all PUBLIC_* variables and transform them to NEXT_PUBLIC_*
+        NEXT_PUBLIC_VARS_TRANSFORMED=$(printenv | grep '^PUBLIC_' | awk -F= '{print "--build-arg NEXT_" $1 "=" $2}' | tr '\n' ' ')
+        # Combine both sets of variables
+        PUBLIC_VARS="$NEXT_PUBLIC_VARS $NEXT_PUBLIC_VARS_TRANSFORMED"
+        echo "PUBLIC_VARS=$PUBLIC_VARS" >> $GITHUB_ENV
+    - name: Set dynamic NUXT_PUBLIC_* environment variables
+      id: set-public-env-vars-nuxt
+      if: ${{ inputs.frontend == 'nuxt' }}
+      run: |
+        # Collect all NUXT_PUBLIC_* variables
+        NEXT_PUBLIC_VARS=$(printenv | grep '^NUXT_PUBLIC_' | awk -F= '{print "--build-arg " $1 "=" $2}' | tr '\n' ' ')
+        # Collect all PUBLIC_* variables and transform them to NUXT_PUBLIC_*
+        NEXT_PUBLIC_VARS_TRANSFORMED=$(printenv | grep '^PUBLIC_' | awk -F= '{print "--build-arg NUXT_" $1 "=" $2}' | tr '\n' ' ')
+        # Combine both sets of variables
+        PUBLIC_VARS="$NEXT_PUBLIC_VARS $NEXT_PUBLIC_VARS_TRANSFORMED"
+        echo "PUBLIC_VARS=$PUBLIC_VARS" >> $GITHUB_ENV
     - name: Build and publish docker image (Next.js frontend)
       if: ${{ inputs.frontend == 'next' || inputs.frontend == 'nextjs' }}
       uses: elgohr/Publish-Docker-Github-Action@v5
@@ -80,20 +102,14 @@ runs:
         password: ${{ inputs.cloud_password }}
         dockerfile: .vuestorefrontcloud/docker/nextjs/Dockerfile-frontend
         buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NEXT_PUBLIC_API_BASE_URL,NEXT_PUBLIC_MULTISTORE_ENABLED,NEXT_IMAGE_PROVIDER,NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL,NEXT_PUBLIC_COVEO_ORGANIZATION_ID,NEXT_PUBLIC_COVEO_ACCESS_TOKEN,NEXT_DEFAULT_HTML_CACHE_CONTROL
-      env:
-        NPM_EMAIL: ${{ inputs.npm_email }}
-        NPM_PASS: ${{ inputs.npm_pass }}
-        NPM_USER: ${{ inputs.npm_user }}
-        NPM_REGISTRY: ${{ inputs.npm_registry }}
-        NEXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url || format('https://{0}.{1}.{2}/api', inputs.project_name, inputs.cloud_region, 'gcp.storefrontcloud.io') }}
-        NEXT_PUBLIC_MULTISTORE_ENABLED: ${{ inputs.multistore_enabled }}
-        NEXT_IMAGE_PROVIDER: ${{ inputs.image_provider }}
-        NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL: ${{ inputs.image_provider_upload_url }}
-        NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL: ${{ inputs.image_provider_fetch_url }}
-        NEXT_PUBLIC_COVEO_ORGANIZATION_ID: ${{ inputs.coveo_organization_id }}
-        NEXT_PUBLIC_COVEO_ACCESS_TOKEN: ${{ inputs.coveo_access_token }}
-        NEXT_DEFAULT_HTML_CACHE_CONTROL: ${{ inputs.default_html_cache_control }}
+        buildargs: |
+          NPM_EMAIL=${{ inputs.npm_email }}
+          NPM_PASS=${{ inputs.npm_pass }}
+          NPM_USER=${{ inputs.npm_user }}
+          NPM_REGISTRY=${{ inputs.npm_registry }}
+          NEXT_IMAGE_PROVIDER=${{ inputs.image_provider }}
+          NEXT_DEFAULT_HTML_CACHE_CONTROL=${{ inputs.default_html_cache_control }}
+          ${{ env.PUBLIC_VARS }}
     - name: Build and publish docker image (Nuxt frontend)
       if: ${{ inputs.frontend == 'nuxt' }}
       uses: elgohr/Publish-Docker-Github-Action@v5
@@ -104,17 +120,11 @@ runs:
         password: ${{ inputs.cloud_password }}
         dockerfile: .vuestorefrontcloud/docker/nuxtjs/Dockerfile-frontend
         buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NUXT_PUBLIC_API_BASE_URL,NUXT_PUBLIC_MULTISTORE_ENABLED,NUXT_IMAGE_PROVIDER,NUXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL,NUXT_PUBLIC_COVEO_ORGANIZATION_ID,NUXT_PUBLIC_COVEO_ACCESS_TOKEN,NUXT_DEFAULT_HTML_CACHE_CONTROL
-      env:
-        NPM_EMAIL: ${{ inputs.npm_email }}
-        NPM_PASS: ${{ inputs.npm_pass }}
-        NPM_USER: ${{ inputs.npm_user }}
-        NPM_REGISTRY: ${{ inputs.npm_registry }}
-        NUXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url || format('https://{0}.{1}.{2}/api', inputs.project_name, inputs.cloud_region, 'gcp.storefrontcloud.io') }}
-        NUXT_PUBLIC_MULTISTORE_ENABLED: ${{ inputs.multistore_enabled }}
-        NUXT_IMAGE_PROVIDER: ${{ inputs.image_provider }}
-        NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL: ${{ inputs.image_provider_upload_url }}
-        NUXT_PUBLIC_IMAGE_LOADER_FETCH_URL: ${{ inputs.image_provider_fetch_url }}
-        NUXT_PUBLIC_COVEO_ORGANIZATION_ID: ${{ inputs.coveo_organization_id }}
-        NUXT_PUBLIC_COVEO_ACCESS_TOKEN: ${{ inputs.coveo_access_token }}
-        NUXT_DEFAULT_HTML_CACHE_CONTROL: ${{ inputs.default_html_cache_control }}
+        buildargs: |
+          NPM_EMAIL=${{ inputs.npm_email }}
+          NPM_PASS=${{ inputs.npm_pass }}
+          NPM_USER=${{ inputs.npm_user }}
+          NPM_REGISTRY=${{ inputs.npm_registry }}
+          NUXT_IMAGE_PROVIDER=${{ inputs.image_provider }}
+          NUXT_DEFAULT_HTML_CACHE_CONTROL=${{ inputs.default_html_cache_control }}
+          ${{ env.PUBLIC_VARS }}

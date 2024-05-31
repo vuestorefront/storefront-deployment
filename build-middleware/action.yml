@@ -60,9 +60,8 @@ runs:
         password: ${{ inputs.cloud_password }}
         dockerfile: .vuestorefrontcloud/docker/middleware/Dockerfile-middleware
         buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY
-      env:
-        NPM_EMAIL: ${{ inputs.npm_email }}
-        NPM_PASS: ${{ inputs.npm_pass }}
-        NPM_USER: ${{ inputs.npm_user }}
-        NPM_REGISTRY: ${{ inputs.npm_registry }}
+        buildargs: |
+          NPM_EMAIL=${{ inputs.npm_email }}
+          NPM_PASS=${{ inputs.npm_pass }}
+          NPM_USER=${{ inputs.npm_user }}
+          NPM_REGISTRY=${{ inputs.npm_registry }}
