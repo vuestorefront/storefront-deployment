@@ -24,7 +24,35 @@ inputs:
   version:
     description: "Version of the app"
     required: true
-
+  middleware_data:
+    description: "Middleware Data"
+    required: false
+    default: ''
+  additional_apps:
+    description: "Additional Apps Data (Excluding Middleware)"
+    required: false
+    default: ''
+  ##  Middleware inputs
+  middleware_path:
+    description: "Route to middleware"
+    required: false
+    default: "/api/"
+  middleware_port:
+    description: "Port of middleware"
+    required: false
+    default: 4000
+  middleware_base_path:
+    description: "The base path of middleware"
+    required: false
+    default: false
+  middleware_heath_check_enabled:
+    description: "Health check enabled"
+    required: false
+    default: true
+  middleware_health_check_path:
+    description: "health check route"
+    required: false 
+    default: "/healthz"
 runs:
   using: "composite"
   steps:
@@ -40,32 +68,34 @@ runs:
     - name: Deploy on ${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
       shell: bash
       run: |
-        tmpfile=$(mktemp /tmp/farmer-output.XXXXXXX)
-        FARMERCODE=$(curl --write-out '%{http_code}' --silent --output "$tmpfile" \
-        -H 'Content-Type: application/json' \
-        -X PATCH -d '{
-          "cloudUserId": "${{ inputs.cloud_username }}",
-          "cloudUserPassword": "${{ inputs.cloud_password }}",
-          "dockerImageHash": "${{ inputs.version }}",
-          "middlewareData": {
-            "path": "/api/",
-            "port": 4000,
-            "has_base_path": false,
-            "health_check": {
-              "enabled": true,
-              "path": "/healthz"
+          tmpfile=$(mktemp /tmp/farmer-output.XXXXXXX)
+          FARMERCODE=$(curl --write-out '%{http_code}' --silent --output "$tmpfile" \
+          -H 'Content-Type: application/json' \
+          -X PATCH -d '{
+            "cloudUserId": "${{ inputs.cloud_username }}",
+            "cloudUserPassword": "${{ inputs.cloud_password }}",
+            "dockerImageHash": "${{ inputs.version }}",
+            "middlewareData": {
+              "path": "${{ inputs.middleware_path }}",
+              "port": ${{ inputs.middleware_port }},
+              "has_base_path": ${{ inputs.middleware_base_path }},
+              "health_check": {
+                "enabled": ${{ inputs.middleware_heath_check_enabled }},
+                "path": "${{ inputs.middleware_health_check_path }}"
+              }
             }
-          }
-        }' https://api.console.vuestorefront.io/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy)
-        cat "$tmpfile"
-        rm "$tmpfile"
-        if [[ $FARMERCODE -lt 400 && $FARMERCODE -ge 200 ]]
-        then
-            echo "farmer deploy: SUCCESS";
-        else
-            echo "farmer deploy FAILED ❌ with code $FARMERCODE";
-            exit 1;
-        fi
+            
+          }' https://api.console.vuestorefront.io/cloud/instances/${{ inputs.project_name }}-${{ env.REGION }}-gcp-storefrontcloud-io/deploy)
+          cat "$tmpfile"
+          rm "$tmpfile"
+          if [[ $FARMERCODE -lt 400 && $FARMERCODE -ge 200 ]]
+          then
+              echo "farmer deploy: SUCCESS";
+          else
+              echo "farmer deploy FAILED ❌ with code $FARMERCODE";
+              exit 1;
+          fi
+
     - name: Update deployment status (success)
       if: success()
       uses: chrnorm/deployment-status@releases/v2
