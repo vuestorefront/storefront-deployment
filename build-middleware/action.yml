@@ -69,4 +69,3 @@ runs:
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
         NPM_REGISTRY: https://registrynpm.storefrontcloud.io
-
