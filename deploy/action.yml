@@ -24,26 +24,6 @@ inputs:
   version:
     description: "Version of the app"
     required: false
-  enable_stripe_ct:
-    description: "Flag to enable Stripe CT modules deploy"
-    required: false
-    default: "false"
-  stripe_ct_extension_name:
-    description: "Stripe CT extension module name"
-    required: false
-    default: "ct-stripe-extension"
-  stripe_ct_extension_port:
-    description: "Stripe CT extension module port"
-    required: false
-    default: "8080"
-  stripe_ct_notification_name:
-    description: "Stripe CT notification module name"
-    required: false
-    default: "ct-stripe-notification"
-  stripe_ct_notification_port:
-    description: "Stripe CT notification module port"
-    required: false
-    default: "8081"
 
 runs:
   using: "composite"

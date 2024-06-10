@@ -68,7 +68,7 @@ runs:
         registry: ${{ inputs.docker_registry_url }}
         username: ${{ inputs.cloud_username }}
         password: ${{ inputs.cloud_password }}
-        dockerfile: TODO
+        dockerfile: .vuestorefrontcloud/docker/${{ inputs.extension_module_name }}/Dockerfile
         buildoptions: --compress
         buildargs: INTEGRATION_CONFIG,INTEGRATION_PORT
       env:
@@ -91,7 +91,7 @@ runs:
         registry: ${{ inputs.docker_registry_url }}
         username: ${{ inputs.cloud_username }}
         password: ${{ inputs.cloud_password }}
-        dockerfile: TODO
+        dockerfile: .vuestorefrontcloud/docker/${{ inputs.notification_module_name }}/Dockerfile
         buildoptions: --compress
         buildargs: INTEGRATION_CONFIG,INTEGRATION_PORT
       env:
