@@ -2,28 +2,48 @@ name: Deploy Storefront
 description: Builds Middleware app docker image
 inputs:
   project_name:
-    description: 'Project name'
+    description: "Project name"
     required: true
   docker_registry_url:
-    description: 'Docker registry url'
+    description: "Docker registry url"
     required: false
-    default: 'registry.vuestorefront.cloud'
+    default: "registry.vuestorefront.cloud"
   cloud_username:
-    description: 'Cloud username'
+    description: "Cloud username"
     required: true
   cloud_password:
-    description: 'Cloud password'
+    description: "Cloud password"
     required: true
   cloud_region:
-    description: 'Cloud region'
+    description: "Cloud region"
     required: true
   console_api_url:
-    description: 'URI for Vue Storefront Console API'
+    description: "URI for Vue Storefront Console API"
     required: false
-    default: 'https://api.platform.vuestorefront.io'
+    default: "https://api.platform.vuestorefront.io"
   version:
-    description: 'Version of the app'
+    description: "Version of the app"
     required: false
+  enable_stripe_ct:
+    description: "Flag to enable Stripe CT modules deploy"
+    required: false
+    default: "false"
+  stripe_ct_extension_name:
+    description: "Stripe CT extension module name"
+    required: false
+    default: "ct-stripe-extension"
+  stripe_ct_extension_port:
+    description: "Stripe CT extension module port"
+    required: false
+    default: "8080"
+  stripe_ct_notification_name:
+    description: "Stripe CT notification module name"
+    required: false
+    default: "ct-stripe-notification"
+  stripe_ct_notification_port:
+    description: "Stripe CT notification module port"
+    required: false
+    default: "8081"
 
 runs:
   using: "composite"
@@ -32,7 +52,7 @@ runs:
       name: Create GitHub deployment
       id: deployment
       with:
-        token: '${{ github.token }}'
+        token: "${{ github.token }}"
         environment-url: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
         environment: production
         initial-status: in_progress
@@ -48,6 +68,7 @@ runs:
 
     - name: Deploy Middleware (${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io)
       uses: fjogeleit/http-request-action@v1
+      if: ${{ inputs.enable_stripe_ct == 'false' }}
       with:
         url: "${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy"
         method: "PATCH"
@@ -55,13 +76,23 @@ runs:
         data: '{ "middleware":true, "cloudUserId":"${{ inputs.cloud_username }}", "cloudUserPassword":"${{ inputs.cloud_password }}", "dockerImageHash":"${{ inputs.version || github.sha }}", "middlewareData":{ "path":"/api/", "port":4000, "has_base_path":false } }'
         timeout: 60000
 
+    - name: Deploy Middleware with Stripe CT (${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io)
+      uses: fjogeleit/http-request-action@v1
+      if: ${{ inputs.enable_stripe_ct == 'true' }}
+      with:
+        url: "${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy"
+        method: "PATCH"
+        customHeaders: '{"Content-Type":"application/json"}'
+        data: '{"middleware":true,"cloudUserId":"${{ inputs.cloud_username }}","cloudUserPassword":"${{ inputs.cloud_password }}","dockerImageHash":"${{ inputs.version || github.sha }}","middlewareData":{"path":"/api/","port":4000,"has_base_path":false},"additionalApps":{"apps":{"commercetools-stripe-extension-module":{"name":"${{ inputs.stripe_ct_extension_name }}","tag":"${{ inputs.version || github.sha }}","image":"${{ inputs.docker_registry_url }}/${{ inputs.project_name }}-storefrontcloud-io/commercetools-stripe-integration-extension:2.0.1","path":/${{ inputs.stripe_ct_extension_name }}/","port":"${{ inputs.stripe_ct_extension_port }}"},"commercetools-stripe-notification-module":{"name":"${{ inputs.stripe_ct_notification_name }}","tag":"${{ inputs.version || github.sha }}","image":"${{ inputs.docker_registry_url }}/${{ inputs.project_name }}-storefrontcloud-io/commercetools-stripe-integration-notification:2.0.1","path":"${{ inputs.stripe_ct_notification_name }}","port":"${{ inputs.stripe_ct_notification_port }}"}}}}'
+        timeout: 60000
+
     - name: Update deployment status (success)
       if: success()
       uses: chrnorm/deployment-status@releases/v2
       with:
-        token: '${{ github.token }}'
+        token: "${{ github.token }}"
         environment-url: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
-        state: 'success'
+        state: "success"
         description: Congratulations! The deploy is done.
         deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
@@ -69,8 +100,8 @@ runs:
       if: failure()
       uses: chrnorm/deployment-status@releases/v2
       with:
-        token: '${{ github.token }}'
+        token: "${{ github.token }}"
         environment-url: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
         description: Unfortunately, the instance hasn't been updated.
-        state: 'failure'
+        state: "failure"
         deployment-id: ${{ steps.deployment.outputs.deployment_id }}
