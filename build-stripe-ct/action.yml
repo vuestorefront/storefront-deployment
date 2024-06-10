@@ -1,0 +1,99 @@
+name: Build Stripe CT Module
+description: Builds Stripe CT module docker image
+inputs:
+  project_name:
+    description: "Project name"
+    required: true
+  docker_registry_url:
+    description: "Docker registry url"
+    required: false
+    default: "registry.vuestorefront.cloud"
+  cloud_username:
+    description: "Cloud username"
+    required: true
+  cloud_password:
+    description: "Cloud password"
+    required: true
+  version:
+    description: "Version of the app"
+    required: false
+  extension_module_name:
+    description: "Stripe CT extension module name"
+    required: false
+    default: "ct-stripe-extension"
+  extension_module_port:
+    description: "Stripe CT extension module port"
+    required: false
+    default: "8080"
+  extension_module_config:
+    description: "Stripe CT extension module config"
+    required: true
+  notification_module_name:
+    description: "Stripe CT notification module name"
+    required: false
+    default: "ct-stripe-notification"
+  notification_module_port:
+    description: "Stripe CT notification module port"
+    required: false
+    default: "8081"
+  notification_module_config:
+    description: "Stripe CT notification module config"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Setup node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+    - name: Encode Basic Auth
+      id: base64-auth
+      shell: bash
+      run: |
+        echo "BASIC_AUTH_TOKEN=$(echo -n ${{ inputs.cloud_username }}:${{ inputs.cloud_password }} | base64 -w 0)" >> "$GITHUB_OUTPUT"
+    # Extension module
+    - name: Check for existing docker image (${{ extension_module_name }})
+      id: check-existing-image
+      uses: javajawa/check-registry-for-image@v2
+      with:
+        registry: ${{ inputs.docker_registry_url }}
+        auth: "Basic ${{ steps.base64-auth.outputs.BASIC_AUTH_TOKEN }}"
+        repository: ${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.extension_module_name }}
+        tag: ${{ inputs.version || github.sha }}
+    - name: Build and publish docker image (${{ extension_module_name }})
+      uses: elgohr/Publish-Docker-Github-Action@v5
+      if: ${{ steps.check-existing-image.outputs.exists == 'false' }}
+      with:
+        name: ${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.extension_module_name }}:${{ inputs.version || github.sha }}
+        registry: ${{ inputs.docker_registry_url }}
+        username: ${{ inputs.cloud_username }}
+        password: ${{ inputs.cloud_password }}
+        dockerfile: TODO
+        buildoptions: --compress
+        buildargs: INTEGRATION_CONFIG,INTEGRATION_PORT
+      env:
+        INTEGRATION_CONFIG: ${{ inputs.integration_config }}
+        INTEGRATION_PORT: ${{ inputs.integration_port }}
+    # Notification module
+    - name: Check for existing docker image (${{ inputs.notification_module_name }})
+      id: check-existing-image
+      uses: javajawa/check-registry-for-image@v2
+      with:
+        registry: ${{ inputs.docker_registry_url }}
+        auth: "Basic ${{ steps.base64-auth.outputs.BASIC_AUTH_TOKEN }}"
+        repository: ${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.notification_module_name }}
+        tag: ${{ inputs.version || github.sha }}
+    - name: Build and publish docker image (${{ inputs.notification_module_name }})
+      uses: elgohr/Publish-Docker-Github-Action@v5
+      if: ${{ steps.check-existing-image.outputs.exists == 'false' }}
+      with:
+        name: ${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.notification_module_name }}:${{ inputs.version || github.sha }}
+        registry: ${{ inputs.docker_registry_url }}
+        username: ${{ inputs.cloud_username }}
+        password: ${{ inputs.cloud_password }}
+        dockerfile: TODO
+        buildoptions: --compress
+        buildargs: INTEGRATION_CONFIG,INTEGRATION_PORT
+      env:
+        INTEGRATION_CONFIG: ${{ inputs.integration_config }}
+        INTEGRATION_PORT: ${{ inputs.integration_port }}
