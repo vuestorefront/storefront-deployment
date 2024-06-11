@@ -1,5 +1,5 @@
-name: Deploy Storefront
-description: Builds Middleware app docker image
+name: Deploy Stripe CT
+description: Deploy Storefront with Stripe for Commercetools
 inputs:
   project_name:
     description: "Project name"
