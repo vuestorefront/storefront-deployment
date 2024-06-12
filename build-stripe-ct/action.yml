@@ -46,11 +46,13 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: 18.x
+
     - name: Encode Basic Auth
       id: base64-auth
       shell: bash
       run: |
         echo "BASIC_AUTH_TOKEN=$(echo -n ${{ inputs.cloud_username }}:${{ inputs.cloud_password }} | base64 -w 0)" >> "$GITHUB_OUTPUT"
+    
     # Extension module
     - name: Check for existing docker image (${{ extension_module_name }})
       id: check-existing-image
@@ -60,6 +62,7 @@ runs:
         auth: "Basic ${{ steps.base64-auth.outputs.BASIC_AUTH_TOKEN }}"
         repository: ${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.extension_module_name }}
         tag: ${{ inputs.version || github.sha }}
+   
     - name: Build and publish docker image (${{ extension_module_name }})
       uses: elgohr/Publish-Docker-Github-Action@v5
       if: ${{ steps.check-existing-image.outputs.exists == 'false' }}
@@ -74,6 +77,7 @@ runs:
       env:
         INTEGRATION_CONFIG: ${{ inputs.integration_config }}
         INTEGRATION_PORT: ${{ inputs.integration_port }}
+    
     # Notification module
     - name: Check for existing docker image (${{ inputs.notification_module_name }})
       id: check-existing-image
@@ -83,6 +87,7 @@ runs:
         auth: "Basic ${{ steps.base64-auth.outputs.BASIC_AUTH_TOKEN }}"
         repository: ${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.notification_module_name }}
         tag: ${{ inputs.version || github.sha }}
+    
     - name: Build and publish docker image (${{ inputs.notification_module_name }})
       uses: elgohr/Publish-Docker-Github-Action@v5
       if: ${{ steps.check-existing-image.outputs.exists == 'false' }}
