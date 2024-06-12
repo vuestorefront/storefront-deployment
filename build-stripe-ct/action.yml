@@ -65,7 +65,7 @@ runs:
    
     - name: Build and publish docker image (${{ inputs.extension_module_name }})
       uses: elgohr/Publish-Docker-Github-Action@v5
-      if: ${{ steps.check-existing-image-for-extension.exists == 'false' }}
+      if: ${{ steps.check-existing-image-for-extension.outputs.exists == 'false' }}
       with:
         name: ${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.extension_module_name }}:${{ inputs.version || github.sha }}
         registry: ${{ inputs.docker_registry_url }}
@@ -90,7 +90,7 @@ runs:
     
     - name: Build and publish docker image (${{ inputs.notification_module_name }})
       uses: elgohr/Publish-Docker-Github-Action@v5
-      if: ${{ steps.check-existing-image-for-notification.exists == 'false' }}
+      if: ${{ steps.check-existing-image-for-notification.outputs.exists == 'false' }}
       with:
         name: ${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.notification_module_name }}:${{ inputs.version || github.sha }}
         registry: ${{ inputs.docker_registry_url }}
