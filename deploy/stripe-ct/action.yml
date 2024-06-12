@@ -53,13 +53,13 @@ runs:
         environment: production
         initial-status: in_progress
 
-    - name: Deploy Stripe CT modules (${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io)
+    - name: Deploy Storefront + Middleware + Stripe CT modules
       uses: fjogeleit/http-request-action@v1
       with:
         url: "${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy"
         method: "PATCH"
         customHeaders: '{"Content-Type":"application/json"}'
-        data: '{"additionalApps":{"apps":{"commercetools-stripe-extension-module":{"name":"${{ inputs.extension_module_name }}","tag":"${{ inputs.version || github.sha }}","image":"${{ inputs.docker_registry_url }}/${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.extension_module_name }}:${{ inputs.version || github.sha }","path":"/${{ inputs.extension_module_name }}/","port":"${{ inputs.extension_module_port }}","has_base_path":false},"commercetools-stripe-notification-module":{"name":"${{ inputs.notification_module_name }}","tag":"${{ inputs.version || github.sha }}","image":"${{ inputs.docker_registry_url }}/${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.notification_module_name }}:${{ inputs.version || github.sha }","path":"/${{ inputs.notification_module_name }}/","port":"${{ inputs.notification_module_port }}","has_base_path":false}}}}'
+        data: '{"cloudUserId":"${{ inputs.cloud_username }}","cloudUserPassword":"${{ inputs.cloud_password }}","dockerImageHash":"${{ inputs.version || github.sha }}","middlewareData":{"path":"/api/","port":4000,"has_base_path":false},"additionalApps":{"apps":{"commercetools-stripe-extension-module":{"name":"${{ inputs.extension_module_name }}","tag":"${{ inputs.version || github.sha }}","image":"${{ inputs.docker_registry_url }}/${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.extension_module_name }}:${{ inputs.version || github.sha }","path":"/${{ inputs.extension_module_name }}/","port":"${{ inputs.extension_module_port }}","has_base_path":false},"commercetools-stripe-notification-module":{"name":"${{ inputs.notification_module_name }}","tag":"${{ inputs.version || github.sha }}","image":"${{ inputs.docker_registry_url }}/${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.notification_module_name }}:${{ inputs.version || github.sha }","path":"/${{ inputs.notification_module_name }}/","port":"${{ inputs.notification_module_port }}","has_base_path":false}}}}'
         timeout: 60000
 
     - name: Update deployment status (success)
