@@ -75,8 +75,8 @@ runs:
         buildoptions: --compress
         buildargs: INTEGRATION_CONFIG,INTEGRATION_PORT
       env:
-        INTEGRATION_CONFIG: ${{ inputs.integration_config }}
-        INTEGRATION_PORT: ${{ inputs.integration_port }}
+        INTEGRATION_CONFIG: ${{ inputs.extension_module_config }}
+        INTEGRATION_PORT: ${{ inputs.extension_module_port }}
     
     # Notification module
     - name: Check for existing docker image (${{ inputs.notification_module_name }})
@@ -100,5 +100,5 @@ runs:
         buildoptions: --compress
         buildargs: INTEGRATION_CONFIG,INTEGRATION_PORT
       env:
-        INTEGRATION_CONFIG: ${{ inputs.integration_config }}
-        INTEGRATION_PORT: ${{ inputs.integration_port }}
+        INTEGRATION_CONFIG: ${{ inputs.notification_module_config }}
+        INTEGRATION_PORT: ${{ inputs.notification_module_port }}
