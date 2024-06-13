@@ -63,9 +63,9 @@ runs:
           NPM_EMAIL=${{ inputs.npm_email }}
           NPM_PASS=${{ inputs.npm_pass }}
           NPM_USER=${{ inputs.npm_user }}
-          NPM_REGISTRY=https://registrynpm.storefrontcloud.io
+          NPM_REGISTRY=${{ inputs.npm_registry }}
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
-        NPM_REGISTRY: https://registrynpm.storefrontcloud.io
+        NPM_REGISTRY: ${{ inputs.npm_registry }}

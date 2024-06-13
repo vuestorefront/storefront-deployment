@@ -93,7 +93,7 @@ runs:
           NPM_EMAIL=${{ inputs.npm_email }}
           NPM_PASS=${{ inputs.npm_pass }}
           NPM_USER=${{ inputs.npm_user }}
-          NPM_REGISTRY=https://registrynpm.storefrontcloud.io
+          NPM_REGISTRY=${{ inputs.npm_registry }}
           NEXT_PUBLIC_API_BASE_URL=${{ inputs.api_base_url || format('https://{0}.{1}.{2}/api', inputs.project_name, inputs.cloud_region, 'gcp.storefrontcloud.io') }}
           NEXT_PUBLIC_MULTISTORE_ENABLED=${{ inputs.multistore_enabled }}
           NEXT_IMAGE_PROVIDER=${{ inputs.image_provider }}
@@ -130,7 +130,7 @@ runs:
           NPM_EMAIL=${{ inputs.npm_email }}
           NPM_PASS=${{ inputs.npm_pass }}
           NPM_USER=${{ inputs.npm_user }}
-          NPM_REGISTRY=https://registrynpm.storefrontcloud.io
+          NPM_REGISTRY=${{ inputs.npm_registry }}
           NUXT_PUBLIC_API_BASE_URL=https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io/api/
           NUXT_PUBLIC_MULTISTORE_ENABLED=${{ inputs.multistore_enabled }}
           NUXT_IMAGE_PROVIDER=${{ inputs.image_provider }}
@@ -143,7 +143,7 @@ runs:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
-        NPM_REGISTRY: https://registrynpm.storefrontcloud.io
+        NPM_REGISTRY: ${{ inputs.npm_registry }}
         NUXT_PUBLIC_API_BASE_URL: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io/api/
         NUXT_PUBLIC_MULTISTORE_ENABLED: ${{ inputs.multistore_enabled }}
         NUXT_IMAGE_PROVIDER: ${{ inputs.image_provider }}
