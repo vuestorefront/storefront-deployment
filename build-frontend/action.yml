@@ -83,7 +83,7 @@ runs:
         password: ${{ inputs.cloud_password }}
         dockerfile: .vuestorefrontcloud/docker/nextjs/Dockerfile-frontend
         buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NEXT_PUBLIC_API_BASE_URL,NEXT_PUBLIC_MULTISTORE_ENABLED,NEXT_IMAGE_PROVIDER,NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL,NEXT_PUBLIC_COVEO_ORGANIZATION_ID,NEXT_PUBLIC_COVEO_ACCESS_TOKEN,NEXT_DEFAULT_HTML_CACHE_CONTROL,NEXT_PUBLIC_COVEO_TRACKING_ID
+        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NEXT_PUBLIC_API_BASE_URL,NEXT_PUBLIC_MULTISTORE_ENABLED,NEXT_IMAGE_PROVIDER,NEXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NEXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL,NEXT_PUBLIC_COVEO_ORGANIZATION_ID,NEXT_PUBLIC_COVEO_ACCESS_TOKEN,NEXT_DEFAULT_HTML_CACHE_CONTROL,NEXT_PUBLIC_COVEO_TRACKING_ID,NEXT_PUBLIC_CDN_CACHE_BUSTING_ID
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
@@ -98,6 +98,7 @@ runs:
         NEXT_PUBLIC_COVEO_ACCESS_TOKEN: ${{ inputs.coveo_access_token }}
         NEXT_PUBLIC_COVEO_TRACKING_ID: ${{ inputs.coveo_tracking_id }}
         NEXT_DEFAULT_HTML_CACHE_CONTROL: ${{ inputs.default_html_cache_control }}
+        NEXT_PUBLIC_CDN_CACHE_BUSTING_ID: ${{  inputs.version || github.sha }}
     - name: Build and publish docker image (Nuxt frontend)
       if: ${{ inputs.frontend == 'nuxt' }}
       uses: elgohr/Publish-Docker-Github-Action@v5
@@ -108,7 +109,7 @@ runs:
         password: ${{ inputs.cloud_password }}
         dockerfile: .vuestorefrontcloud/docker/nuxtjs/Dockerfile-frontend
         buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NUXT_PUBLIC_API_BASE_URL,NUXT_PUBLIC_MULTISTORE_ENABLED,NUXT_IMAGE_PROVIDER,NUXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL,NUXT_PUBLIC_COVEO_ORGANIZATION_ID,NUXT_PUBLIC_COVEO_ACCESS_TOKEN,NUXT_DEFAULT_HTML_CACHE_CONTROL,NUXT_PUBLIC_COVEO_TRACKING_ID
+        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,NUXT_PUBLIC_API_BASE_URL,NUXT_PUBLIC_MULTISTORE_ENABLED,NUXT_IMAGE_PROVIDER,NUXT_PUBLIC_IMAGE_LOADER_FETCH_URL,NUXT_PUBLIC_IMAGE_LOADER_UPLOAD_URL,NUXT_PUBLIC_COVEO_ORGANIZATION_ID,NUXT_PUBLIC_COVEO_ACCESS_TOKEN,NUXT_DEFAULT_HTML_CACHE_CONTROL,NUXT_PUBLIC_COVEO_TRACKING_ID,NUXT_PUBLIC_CDN_CACHE_BUSTING_ID
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
@@ -123,3 +124,4 @@ runs:
         NUXT_PUBLIC_COVEO_ACCESS_TOKEN: ${{ inputs.coveo_access_token }}
         NUXT_PUBLIC_COVEO_TRACKING_ID: ${{ inputs.coveo_tracking_id }}
         NUXT_DEFAULT_HTML_CACHE_CONTROL: ${{ inputs.default_html_cache_control }}
+        NUXT_PUBLIC_CDN_CACHE_BUSTING_ID: ${{  inputs.version || github.sha }}
