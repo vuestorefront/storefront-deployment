@@ -37,11 +37,13 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: 18.x
+
     - name: Encode Basic Auth
       id: base64-auth
       shell: bash
       run: |
         echo "BASIC_AUTH_TOKEN=$(echo -n ${{ inputs.cloud_username }}:${{ inputs.cloud_password }} | base64 -w 0)" >> "$GITHUB_OUTPUT"
+
     - name: Check for existing image
       id: check-existing-image
       uses: javajawa/check-registry-for-image@v2
@@ -50,6 +52,7 @@ runs:
         auth: "Basic ${{ steps.base64-auth.outputs.BASIC_AUTH_TOKEN }}"
         repository: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront-middleware
         tag: ${{ inputs.version || github.sha }}
+
     - name: Build and publish docker image (middleware)
       uses: elgohr/Publish-Docker-Github-Action@v5
       if: ${{ steps.check-existing-image.outputs.exists == 'false' }}
