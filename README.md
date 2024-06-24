@@ -42,6 +42,8 @@ with:
 - `npm_registry`: URL to the private NPM registry. Optional field. Defaults to `https://registrynpm.storefrontcloud.io`.
 - `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used
 
+Any environment variables needed by an application is needed to be set in the Alokai Console.
+
 ### build-middleware
 
 ```yaml
