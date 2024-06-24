@@ -67,12 +67,13 @@ runs:
         password: ${{ inputs.cloud_password }}
         dockerfile: .vuestorefrontcloud/docker/nextjs/Dockerfile-frontend
         buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY
+        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,GIT_SHA
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
         NPM_REGISTRY: ${{ inputs.npm_registry }}
+        GIT_SHA: ${{ inputs.version || github.sha }}
 
     - name: Build and publish docker image (Nuxt frontend)
       if: ${{ inputs.frontend == 'nuxt' }}
@@ -84,9 +85,10 @@ runs:
         password: ${{ inputs.cloud_password }}
         dockerfile: .vuestorefrontcloud/docker/nuxtjs/Dockerfile-frontend
         buildoptions: --compress
-        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY
+        buildargs: NPM_EMAIL,NPM_PASS,NPM_USER,NPM_REGISTRY,GIT_SHA
       env:
         NPM_EMAIL: ${{ inputs.npm_email }}
         NPM_PASS: ${{ inputs.npm_pass }}
         NPM_USER: ${{ inputs.npm_user }}
         NPM_REGISTRY: ${{ inputs.npm_registry }}
+        GIT_SHA: ${{ inputs.version || github.sha }}
