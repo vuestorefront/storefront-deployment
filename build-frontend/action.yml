@@ -34,6 +34,10 @@ inputs:
   version:
     description: 'Version of the app'
     required: false
+  image_provider:
+    description: 'Image provider (only for Nuxt)'
+    required: false
+    default: 'ipx'
 runs:
   using: 'composite'
   steps:
@@ -93,4 +97,5 @@ runs:
           NPM_PASS=${{ inputs.npm_pass }}
           NPM_USER=${{ inputs.npm_user }}
           NPM_REGISTRY=${{ inputs.npm_registry }}
+          NUXT_IMAGE_PROVIDER=${{ inputs.image_provider }}
           GIT_SHA=${{ steps.resolve.outputs.version }}
