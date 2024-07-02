@@ -48,7 +48,9 @@ runs:
       id: resolve
       shell: bash
       run: |
+        # Set the version of the app based on user input or use git commit hash
         echo "version=${{ inputs.version || github.sha }}" >> $GITHUB_OUTPUT
+        # Set the reference address for app in docker registry
         echo "ref=${{ inputs.docker_registry_url }}/${{ inputs.project_name }}-storefrontcloud-io" >> $GITHUB_OUTPUT
 
     - name: Check for existing image
