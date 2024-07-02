@@ -83,8 +83,8 @@ runs:
         file: ${{ steps.resolve.outputs.path }}
         push: true
         tags: ${{ steps.resolve.outputs.ref }}/vue-storefront:${{ steps.resolve.outputs.version }}
-        cache-from: "type=registry,ref=${{ inputs.docker_registry_ref }}/vue-storefront:buildcache"
-        cache-to: "type=registry,ref=${{ inputs.docker_registry_ref }}/vue-storefront:buildcache,mode=max"
+        cache-from: "type=registry,ref=${{ steps.resolve.outputs.ref }}/vue-storefront:buildcache"
+        cache-to: "type=registry,ref=${{ steps.resolve.outputs.ref }}/vue-storefront:buildcache,mode=max"
         build-args: |
           NPM_EMAIL=${{ inputs.npm_email }}
           NPM_PASS=${{ inputs.npm_pass }}
