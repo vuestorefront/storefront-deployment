@@ -27,6 +27,7 @@ with:
   docker_registry_url: 'registry.vuestorefront.cloud'
   npm_registry: 'https://registrynpm.storefrontcloud.io'
   version: '2.3.0'
+  image_provider: 'ipx'
 ```
 
 **Input Parameters:**
@@ -41,6 +42,7 @@ with:
 - `docker_registry_url`: URL to the Docker image registry. Optional field. Defaults to `registry.vuestorefront.cloud`.
 - `npm_registry`: URL to the private NPM registry. Optional field. Defaults to `https://registrynpm.storefrontcloud.io`.
 - `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used
+- `image_provider`: Select image provider for Nuxt Image. Optional field. Only for Nuxt.
 
 Any environment variables needed by an application is needed to be set in the Alokai Console.
 
