@@ -98,4 +98,3 @@ runs:
           NPM_USER=${{ inputs.npm_user }}
           NPM_REGISTRY=${{ inputs.npm_registry }}
           NUXT_IMAGE_PROVIDER=${{ inputs.image_provider }}
-          GIT_SHA=${{ steps.resolve.outputs.version }}
