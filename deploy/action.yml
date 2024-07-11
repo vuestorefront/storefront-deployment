@@ -37,22 +37,13 @@ runs:
         environment: production
         initial-status: in_progress
 
-    - name: Deploy Frontend App (${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io)
+    - name: Deploy (${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io)
       uses: fjogeleit/http-request-action@v1
       with:
         url: "${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy"
         method: "PATCH"
         customHeaders: '{"Content-Type":"application/json"}'
-        data: '{ "cloudUserId":"${{ inputs.cloud_username }}", "cloudUserPassword":"${{ inputs.cloud_password }}", "dockerImageHash":"${{ inputs.version || github.sha }}" }'
-        timeout: 60000
-
-    - name: Deploy Middleware (${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io)
-      uses: fjogeleit/http-request-action@v1
-      with:
-        url: "${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy"
-        method: "PATCH"
-        customHeaders: '{"Content-Type":"application/json"}'
-        data: '{ "middleware":true, "cloudUserId":"${{ inputs.cloud_username }}", "cloudUserPassword":"${{ inputs.cloud_password }}", "dockerImageHash":"${{ inputs.version || github.sha }}", "middlewareData":{ "path":"/api/", "port":4000, "has_base_path":false } }'
+        data: '{"middleware":true,"cloudUserId":"${{ inputs.cloud_username }}","cloudUserPassword":"${{ inputs.cloud_password }}","dockerImageHash":"${{ inputs.version || github.sha }}","env_var":{"03731de5-5ff9-49d9-a6e5-8af9c4fa75d9":{"name":"NUXT_PUBLIC_ALOKAI_MIDDLEWARE_CDN_CACHE_BUSTING_ID","value":"${{ inputs.version || github.sha }}","is_secret":false},"03731de5-5ff9-49d9-a6e5-8af9c4fa75":{"name":"NEXT_PUBLIC_ALOKAI_MIDDLEWARE_CDN_CACHE_BUSTING_ID","value":"${{ inputs.version || github.sha }}","is_secret":false}},"middlewareData":{"path":"/api/","port":4000,"has_base_path":false}}'
         timeout: 60000
 
     - name: Update deployment status (success)
