@@ -55,7 +55,7 @@ runs:
 
     - name: Check for existing image
       id: check-existing-image
-      uses: javajawa/check-registry-for-image@v2
+      uses: javajawa/check-registry-for-image@9d8471656d5ab2ec94e8fee5b02c44cc7c3cff4b
       with:
         registry: ${{ inputs.docker_registry_url }}
         repository: ${{ inputs.project_name }}-storefrontcloud-io/vue-storefront-middleware
