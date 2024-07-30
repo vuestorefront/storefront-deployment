@@ -113,10 +113,10 @@ with:
 - `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used
 - `extension_module_name`: Extension module name. It’s used as the name of the docker image and path where the api is available. Default value is `ct-stripe-extension`.
 - `extension_module_port`: Port of the extension module. Default value is `8080`.
-- `extension_module_config`: Configuration for the extension module.
+- `extension_module_config`: Configuration for the extension module. Required field.
 - `notification_module_name`: Notification module name. It’s used as the name of the docker image and path where the api is available. Default value is `ct-stripe-notification`.
 - `notification_module_port`: Port of the notification module. Default value is `8081`.
-- `notification_module_config`: Configuration for the notification module.
+- `notification_module_config`: Configuration for the notification module. Required field.
 
 ### deploy
 
