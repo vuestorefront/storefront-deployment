@@ -1,5 +1,5 @@
-name: Deploy Storefront
-description: Deploy the Storefront to the Console
+name: Deploy Stripe CT
+description: Deploy Storefront with Stripe for Commercetools
 inputs:
   project_name:
     description: "Project name"
@@ -24,6 +24,22 @@ inputs:
   version:
     description: "Version of the app"
     required: false
+  extension_module_name:
+    description: "Stripe CT extension module name"
+    required: false
+    default: "ct-stripe-extension"
+  extension_module_port:
+    description: "Stripe CT extension module port"
+    required: false
+    default: "8080"
+  notification_module_name:
+    description: "Stripe CT notification module name"
+    required: false
+    default: "ct-stripe-notification"
+  notification_module_port:
+    description: "Stripe CT notification module port"
+    required: false
+    default: "8081"
 
 runs:
   using: "composite"
@@ -37,13 +53,13 @@ runs:
         environment: production
         initial-status: in_progress
 
-    - name: Deploy (${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io)
+    - name: Deploy Storefront + Middleware + Stripe CT modules
       uses: fjogeleit/http-request-action@v1
       with:
         url: "${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy"
         method: "PATCH"
         customHeaders: '{"Content-Type":"application/json"}'
-        data: '{"middleware":true,"cloudUserId":"${{ inputs.cloud_username }}","cloudUserPassword":"${{ inputs.cloud_password }}","dockerImageHash":"${{ inputs.version || github.sha }}","env_var":{"03731de5-5ff9-49d9-a6e5-8af9c4fa75d9":{"name":"NUXT_PUBLIC_ALOKAI_MIDDLEWARE_CDN_CACHE_BUSTING_ID","value":"${{ inputs.version || github.sha }}","is_secret":false},"03731de5-5ff9-49d9-a6e5-8af9c4fa75":{"name":"NEXT_PUBLIC_ALOKAI_MIDDLEWARE_CDN_CACHE_BUSTING_ID","value":"${{ inputs.version || github.sha }}","is_secret":false}},"middlewareData":{"path":"/api/","port":4000,"has_base_path":false}}'
+        data: '{"cloudUserId":"${{ inputs.cloud_username }}","cloudUserPassword":"${{ inputs.cloud_password }}","dockerImageHash":"${{ inputs.version || github.sha }}","middlewareData":{"path":"/api/","port":4000,"has_base_path":false},"additionalApps":{"apps":{"commercetools-stripe-extension-module":{"name":"${{ inputs.extension_module_name }}","tag":"${{ inputs.version || github.sha }}","image":"${{ inputs.docker_registry_url }}/${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.extension_module_name }}","path":"/${{ inputs.extension_module_name }}/","port":"${{ inputs.extension_module_port }}","has_base_path":false},"commercetools-stripe-notification-module":{"name":"${{ inputs.notification_module_name }}","tag":"${{ inputs.version || github.sha }}","image":"${{ inputs.docker_registry_url }}/${{ inputs.project_name }}-storefrontcloud-io/${{ inputs.notification_module_name }}","path":"/${{ inputs.notification_module_name }}/","port":"${{ inputs.notification_module_port }}","has_base_path":false}}}}'
         timeout: 60000
 
     - name: Update deployment status (success)
