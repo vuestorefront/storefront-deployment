@@ -15,7 +15,7 @@ With those four you can easily compose the deployment script for your needs.
 ### build-frontend
 
 ```yaml
-uses: vuestorefront/storefront-deployment/build-frontend@v1
+uses: vuestorefront/storefront-deployment/build-frontend@v4.4.0
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -49,7 +49,7 @@ Any environment variables needed by an application is needed to be set in the Al
 ### build-middleware
 
 ```yaml
-uses: vuestorefront/storefront-deployment/build-middleware@v1
+uses: vuestorefront/storefront-deployment/build-middleware@v4.4.0
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -77,7 +77,7 @@ with:
 ### build-stripe-ct
 
 ```yaml
-uses: vuestorefront/storefront-deployment/build-stripe-ct
+uses: vuestorefront/storefront-deployment/build-stripe-ct@v4.4.0
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -107,7 +107,7 @@ with:
 ### deploy
 
 ```yaml
-uses: vuestorefront/storefront-deployment/deploy@v1
+uses: vuestorefront/storefront-deployment/deploy@v4.4.0
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -126,12 +126,14 @@ with:
 - `cloud_region`: Region where the environment is set up in the Console. Required field.
 - `docker_registry_url`: URL to the Docker image registry. Optional field. Defaults to `registry.vuestorefront.cloud`.
 - `console_api_url`: URL to the Console. Optional field. Defaults to `https://api.platform.vuestorefront.io`.
-- `version`: Docker image tag that will be deployed. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used
+- `version`: Docker image tag that will be deployed. Example: 2.3.0, 3.1.0-rc.1. If not passed, `github.sha` will be used
+- `middleware_path`: Path in URL of the Storefront on which Middleware app will be available. If not passed, `/api/` will be used
+- `middleware_port`: Port on which Middleware application is working on. If not passed, `4000` will be used
 
 ### deploy/stripe-ct
 
 ```yaml
-uses: vuestorefront/storefront-deployment/deploy/stripe-ct
+uses: vuestorefront/storefront-deployment/deploy/stripe-ct@v4.4.0
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
