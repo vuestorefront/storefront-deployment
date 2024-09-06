@@ -66,13 +66,17 @@ inputs:
     description: 'Default cache control header value for SSR pages'
     required: false
     default: 'public, max-age=0, s-maxage=15, must-revalidate'
+  node_version:
+    description: 'Node version'
+    required: false
+    default: '18'
 runs:
   using: 'composite'
   steps:
     - name: Setup node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: 18.x
+        node-version: ${{ inputs.node_version }}
     - name: Build and publish docker image (Next.js frontend)
       if: ${{ inputs.frontend == 'next' || inputs.frontend == 'nextjs' }}
       uses: elgohr/Publish-Docker-Github-Action@v5

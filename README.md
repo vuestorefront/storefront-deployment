@@ -15,7 +15,7 @@ With those four you can easily compose the deployment script for your needs.
 ### build-frontend
 
 ```yaml
-uses: vuestorefront/storefront-deployment/build-frontend@v1
+uses: vuestorefront/storefront-deployment/build-frontend@v3
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -36,6 +36,7 @@ with:
   coveo_access_token: ${{ secrets.NEXT_PUBLIC_COVEO_ACCESS_TOKEN }}
   version: 2.3.0
   default_html_cache_control:  ${{ vars.DEFAULT_HTML_CACHE_CONTROL || 'public, max-age=0, s-maxage=0, must-revalidate' }}
+  node_version: 18
 ```
 
 **Input Parameters:**
@@ -59,11 +60,12 @@ with:
 - `coveo_tracking_id`: Coveo tracking id required for coveo integration. Optional field.
 - `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used
 - `default_html_cache_control`: Default cache control header value for SSR pages. If not passed, `public, max-age=0, s-maxage=15, must-revalidate` will be used.
+- `node_version`: Node version. Defaults to 18.
 
 ### build-middleware
 
 ```yaml
-uses: vuestorefront/storefront-deployment/build-middleware@v1
+uses: vuestorefront/storefront-deployment/build-middleware@v3
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -74,6 +76,7 @@ with:
   docker_registry_url: 'registry.vuestorefront.cloud'
   npm_registry: 'https://registrynpm.storefrontcloud.io'
   version: 2.3.0
+  node_version: 18
 ```
 
 **Input Parameters:**
@@ -87,11 +90,12 @@ with:
 - `docker_registry_url`: URL to the Docker image registry. Optional field. Defaults to `registry.vuestorefront.cloud`.
 - `npm_registry`: URL to the private NPM registry. Optional field. Defaults to `https://registrynpm.storefrontcloud.io`.
 - `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used
+- `node_version`: Node version. Defaults to 18.
 
 ### deploy
 
 ```yaml
-uses: vuestorefront/storefront-deployment/deploy@v1
+uses: vuestorefront/storefront-deployment/deploy@v3
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}

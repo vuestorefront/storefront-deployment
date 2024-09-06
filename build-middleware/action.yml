@@ -30,13 +30,17 @@ inputs:
   version:
     description: 'Version of the app'
     required: false
+  node_version:
+    description: 'Node version'
+    required: false
+    default: '18'
 runs:
   using: "composite"
   steps:
     - name: Setup node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: 18.x
+        node-version: ${{ inputs.node_version }}
     - name: Encode Basic Auth
       id: base64-auth
       shell: bash
