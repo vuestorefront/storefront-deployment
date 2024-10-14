@@ -30,6 +30,9 @@ inputs:
   version:
     description: 'Version of the app'
     required: false
+  extra_docker_envs:
+    description: 'List of additional ENVs that should be passed at Docker image build-time'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -43,6 +46,35 @@ runs:
         registry: ${{ inputs.docker_registry_url }}
         username: ${{ inputs.cloud_username }}
         password: ${{ inputs.cloud_password }}
+
+    - name: Resolve docker envs
+      id: docker_envs
+      uses: actions/github-script@v7
+      env:
+        INPUT_NPM_EMAIL: ${{ inputs.npm_email }}
+        INPUT_NPM_PASS: ${{ inputs.npm_pass }}
+        INPUT_NPM_USER: ${{ inputs.npm_user }}
+        INPUT_NPM_REGISTRY: ${{ inputs.npm_registry }}
+        INPUT_EXTRA_DOCKER_ENVS: ${{ inputs.extra_docker_envs }}
+      with:
+        script: |
+          const base = {
+            'NPM_EMAIL': core.getInput('npm_email'),
+            'NPM_PASS': core.getInput('npm_pass'),
+            'NPM_USER': core.getInput('npm_user'),
+            'NPM_REGISTRY': core.getInput('npm_registry'),
+          };
+
+          const transformedBaseEnv = Object.entries(base)
+            .map(([key, value]) => `${key}=${value}`);
+
+          const extraEnvs = core.getMultilineInput('extra_docker_envs', { required: false });
+          const mergedEnvs = [
+            ...transformedBaseEnv,
+            ...extraEnvs,
+          ]
+
+          core.setOutput('envs', mergedEnvs);
 
     - name: Resolve values of the versions, docker ref & dockerfile path
       id: resolve
@@ -71,8 +103,4 @@ runs:
         tags: ${{ steps.resolve.outputs.ref }}/vue-storefront-middleware:${{ steps.resolve.outputs.version }}
         cache-from: "type=registry,ref=${{ steps.resolve.outputs.ref }}/vue-storefront-middleware:buildcache"
         cache-to: "type=registry,ref=${{ steps.resolve.outputs.ref }}/vue-storefront-middleware:buildcache,mode=max"
-        build-args: |
-          NPM_EMAIL=${{ inputs.npm_email }}
-          NPM_PASS=${{ inputs.npm_pass }}
-          NPM_USER=${{ inputs.npm_user }}
-          NPM_REGISTRY=${{ inputs.npm_registry }}
+        build-args: ${{ steps.docker_envs.envs }}
