@@ -28,7 +28,7 @@ with:
   npm_registry: 'https://registrynpm.storefrontcloud.io'
   version: '2.3.0'
   image_provider: 'ipx'
-  extra_docker_envs: |
+  docker_buildargs: |
     EXTRA_ENV_FOR_DOCKERFILE=somevalue-hardcoded
     ANOTHER_EXTRA_ENV=${{ secrets.SOME_VALUE }}
 ```
@@ -64,7 +64,7 @@ with:
   docker_registry_url: 'registry.vuestorefront.cloud'
   npm_registry: 'https://registrynpm.storefrontcloud.io'
   version: 2.3.0
-  extra_docker_envs: |
+  docker_buildargs: |
     EXTRA_ENV_FOR_DOCKERFILE=somevalue-hardcoded
     ANOTHER_EXTRA_ENV=${{ secrets.SOME_VALUE }}
 ```
