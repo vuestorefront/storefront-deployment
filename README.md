@@ -15,7 +15,7 @@ With those four you can easily compose the deployment script for your needs.
 ### build-frontend
 
 ```yaml
-uses: vuestorefront/storefront-deployment/build-frontend@v4.4.0
+uses: vuestorefront/storefront-deployment/build-frontend@v4.5.0
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -28,6 +28,9 @@ with:
   npm_registry: 'https://registrynpm.storefrontcloud.io'
   version: '2.3.0'
   image_provider: 'ipx'
+  extra_docker_envs: |
+    EXTRA_ENV_FOR_DOCKERFILE=somevalue-hardcoded
+    ANOTHER_EXTRA_ENV=${{ secrets.SOME_VALUE }}
 ```
 
 **Input Parameters:**
@@ -43,13 +46,14 @@ with:
 - `npm_registry`: URL to the private NPM registry. Optional field. Defaults to `https://registrynpm.storefrontcloud.io`.
 - `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used
 - `image_provider`: Select image provider for Nuxt Image. Optional field. Only for Nuxt.
+- `docker_buildargs`: Multi-line input field, for passing in the additional build args. Optional field.
 
 Any environment variables needed by an application is needed to be set in the Alokai Console.
 
 ### build-middleware
 
 ```yaml
-uses: vuestorefront/storefront-deployment/build-middleware@v4.4.0
+uses: vuestorefront/storefront-deployment/build-middleware@v4.5.0
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -60,6 +64,9 @@ with:
   docker_registry_url: 'registry.vuestorefront.cloud'
   npm_registry: 'https://registrynpm.storefrontcloud.io'
   version: 2.3.0
+  extra_docker_envs: |
+    EXTRA_ENV_FOR_DOCKERFILE=somevalue-hardcoded
+    ANOTHER_EXTRA_ENV=${{ secrets.SOME_VALUE }}
 ```
 
 **Input Parameters:**
@@ -73,11 +80,12 @@ with:
 - `docker_registry_url`: URL to the Docker image registry. Optional field. Defaults to `registry.vuestorefront.cloud`.
 - `npm_registry`: URL to the private NPM registry. Optional field. Defaults to `https://registrynpm.storefrontcloud.io`.
 - `version`: Version that will be used for docker image tag. Example: 2.3.0, 3.1.0-rc.1. If not passed, github.sha will be used
+- `docker_buildargs`: Multi-line input field, for passing in the additional build args. Optional field.
 
 ### build-stripe-ct
 
 ```yaml
-uses: vuestorefront/storefront-deployment/build-stripe-ct@v4.4.0
+uses: vuestorefront/storefront-deployment/build-stripe-ct@v4.5.0
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -107,7 +115,7 @@ with:
 ### deploy
 
 ```yaml
-uses: vuestorefront/storefront-deployment/deploy@v4.4.0
+uses: vuestorefront/storefront-deployment/deploy@v4.5.0
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
@@ -133,7 +141,7 @@ with:
 ### deploy/stripe-ct
 
 ```yaml
-uses: vuestorefront/storefront-deployment/deploy/stripe-ct@v4.4.0
+uses: vuestorefront/storefront-deployment/deploy/stripe-ct@v4.5.0
 with:
   project_name: ${{ secrets.PROJECT_NAME }}
   cloud_username: ${{ secrets.CLOUD_USERNAME }}
