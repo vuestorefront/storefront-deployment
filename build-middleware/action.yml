@@ -60,6 +60,7 @@ runs:
         INPUT_DOCKER_REGISTRY_URL: ${{ inputs.docker_registry_url }}
         INPUT_PROJECT_NAME: ${{ inputs.project_name }}
       with:
+        result-encoding: string
         script: |
           const base = {
             'NPM_EMAIL': core.getInput('npm_email'),
@@ -77,7 +78,7 @@ runs:
             ...extraBuildArgs,
           ];
 
-          core.setOutput('docker_args', mergedBuildArgs);
+          core.setOutput('docker_args', mergedBuildArgs.join('\n'));
 
           const versionInput = core.getInput('version');
           core.setOutput('version', versionInput || context.sha);
@@ -102,4 +103,4 @@ runs:
         tags: ${{ steps.resolve.outputs.ref }}/vue-storefront-middleware:${{ steps.resolve.outputs.version }}
         cache-from: "type=registry,ref=${{ steps.resolve.outputs.ref }}/vue-storefront-middleware:buildcache"
         cache-to: "type=registry,ref=${{ steps.resolve.outputs.ref }}/vue-storefront-middleware:buildcache,mode=max"
-        build-args: ${{ fromJson(steps.resolve.outputs.docker_args) }}
+        build-args: ${{ steps.resolve.outputs.docker_args }}
