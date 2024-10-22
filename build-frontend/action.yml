@@ -126,4 +126,4 @@ runs:
         tags: ${{ steps.resolve.outputs.ref }}/vue-storefront:${{ steps.resolve.outputs.version }}
         cache-from: "type=registry,ref=${{ steps.resolve.outputs.ref }}/vue-storefront:buildcache"
         cache-to: "type=registry,ref=${{ steps.resolve.outputs.ref }}/vue-storefront:buildcache,mode=max"
-        build-args: ${{ steps.resolve.outputs.docker_args }}
+        build-args: ${{ fromJson(steps.resolve.outputs.docker_args) }}
