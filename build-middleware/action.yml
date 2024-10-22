@@ -30,6 +30,9 @@ inputs:
   version:
     description: 'Version of the app'
     required: false
+  docker_buildargs:
+    description: 'List of additional ENVs that should be passed at Docker image build-time'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -44,14 +47,43 @@ runs:
         username: ${{ inputs.cloud_username }}
         password: ${{ inputs.cloud_password }}
 
-    - name: Resolve values of the versions, docker ref & dockerfile path
+    - name: Resolve docker buildargs
       id: resolve
-      shell: bash
-      run: |
-        # Set the version of the app based on user input or use git commit hash
-        echo "version=${{ inputs.version || github.sha }}" >> $GITHUB_OUTPUT
-        # Set the reference address for app in docker registry
-        echo "ref=${{ inputs.docker_registry_url }}/${{ inputs.project_name }}-storefrontcloud-io" >> $GITHUB_OUTPUT
+      uses: actions/github-script@v7
+      env:
+        INPUT_NPM_EMAIL: ${{ inputs.npm_email }}
+        INPUT_NPM_PASS: ${{ inputs.npm_pass }}
+        INPUT_NPM_USER: ${{ inputs.npm_user }}
+        INPUT_NPM_REGISTRY: ${{ inputs.npm_registry }}
+        INPUT_DOCKER_BUILDARGS: ${{ inputs.docker_buildargs }}
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_DOCKER_REGISTRY_URL: ${{ inputs.docker_registry_url }}
+        INPUT_PROJECT_NAME: ${{ inputs.project_name }}
+      with:
+        result-encoding: string
+        script: |
+          const base = {
+            'NPM_EMAIL': core.getInput('npm_email'),
+            'NPM_PASS': core.getInput('npm_pass'),
+            'NPM_USER': core.getInput('npm_user'),
+            'NPM_REGISTRY': core.getInput('npm_registry'),
+          };
+
+          const transformedBaseArgs = Object.entries(base)
+            .map(([key, value]) => `${key}=${value}`);
+
+          const extraBuildArgs = core.getMultilineInput('docker_buildargs', { required: false });
+          const mergedBuildArgs = [
+            ...transformedBaseArgs,
+            ...extraBuildArgs,
+          ];
+
+          core.setOutput('docker_args', mergedBuildArgs.join('\n'));
+
+          const versionInput = core.getInput('version');
+          core.setOutput('version', versionInput || context.sha);
+
+          core.setOutput('ref', `${core.getInput('docker_registry_url')}/${core.getInput('project_name')}-storefrontcloud-io`);
 
     - name: Check for existing image
       id: check-existing-image
@@ -71,8 +103,4 @@ runs:
         tags: ${{ steps.resolve.outputs.ref }}/vue-storefront-middleware:${{ steps.resolve.outputs.version }}
         cache-from: "type=registry,ref=${{ steps.resolve.outputs.ref }}/vue-storefront-middleware:buildcache"
         cache-to: "type=registry,ref=${{ steps.resolve.outputs.ref }}/vue-storefront-middleware:buildcache,mode=max"
-        build-args: |
-          NPM_EMAIL=${{ inputs.npm_email }}
-          NPM_PASS=${{ inputs.npm_pass }}
-          NPM_USER=${{ inputs.npm_user }}
-          NPM_REGISTRY=${{ inputs.npm_registry }}
+        build-args: ${{ steps.resolve.outputs.docker_args }}
