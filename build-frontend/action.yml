@@ -84,13 +84,13 @@ runs:
 
           const extraArgs = core.getMultilineInput('docker_buildargs', { required: false });
           const mergedArgs = [
-            ...transformedBaseArgs
+            ...transformedBaseArgs,
             ...extraArgs,
           ];
 
           core.setOutput('docker_args', mergedArgs);
 
-          const versionInput = core.getIntput('version');
+          const versionInput = core.getInput('version');
           core.setOutput('version', versionInput || context.sha);
 
           core.setOutput('ref', `${core.getInput('docker_registry_url')}/${core.getInput('project_name')}-storefrontcloud-io`);
