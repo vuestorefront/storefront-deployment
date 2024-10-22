@@ -97,7 +97,7 @@ runs:
 
           const frontendInput = core.getInput('frontend');
 
-          switch (frontend) {
+          switch (frontendInput) {
             case "next":
               core.setOutput('path', '.vuestorefrontcloud/docker/nextjs/Dockerfile-frontend');
               break;
