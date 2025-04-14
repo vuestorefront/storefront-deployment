@@ -2,47 +2,47 @@ name: Build Frontend
 description: Builds Storefront app docker image
 inputs:
   frontend:
-    description: 'Switch between Next.js and Nuxt'
+    description: "Switch between Next.js and Nuxt"
     required: false
-    default: 'next'
+    default: "next"
   project_name:
-    description: 'Project name'
+    description: "Project name"
     required: true
   docker_registry_url:
-    description: 'Docker registry url'
+    description: "Docker registry url"
     required: false
-    default: 'registry.vuestorefront.cloud'
+    default: "registry.vuestorefront.cloud"
   cloud_username:
-    description: 'Cloud username'
+    description: "Cloud username"
     required: true
   cloud_password:
-    description: 'Cloud password'
+    description: "Cloud password"
     required: true
   npm_email:
-    description: 'NPM email'
+    description: "NPM email"
     required: true
   npm_pass:
-    description: 'NPM password'
+    description: "NPM password"
     required: true
   npm_user:
-    description: 'NPM user'
+    description: "NPM user"
     required: true
   npm_registry:
-    description: 'NPM registry'
+    description: "NPM registry"
     required: false
-    default: 'https://registrynpm.storefrontcloud.io'
+    default: "https://registrynpm.storefrontcloud.io"
   version:
-    description: 'Version of the app'
+    description: "Version of the app"
     required: false
   image_provider:
-    description: 'Image provider (only for Nuxt)'
+    description: "Image provider (only for Nuxt)"
     required: false
-    default: 'ipx'
+    default: "ipx"
   docker_buildargs:
-    description: 'List of additional ENVs that should be passed at Docker image build-time'
+    description: "List of additional ENVs that should be passed at Docker image build-time"
     required: false
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Set up Docker Buildx
       id: buildx

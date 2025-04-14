@@ -25,13 +25,13 @@ inputs:
     description: "Version of the app"
     required: false
   middleware_path:
-    description: 'Path to the Middleware app on the Reverse Proxy'
+    description: "Path to the Middleware app on the Reverse Proxy"
     required: false
-    default: '/api/'
+    default: "/api/"
   middleware_port:
-    description: 'Port of the Middleware app'
+    description: "Port of the Middleware app"
     required: false
-    default: 4000
+    default: "4000"
 
 runs:
   using: "composite"
@@ -41,13 +41,14 @@ runs:
       id: deployment
       with:
         token: "${{ github.token }}"
-        environment-url: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
+        environment-url: https://${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io.i.alokai.cloud
         environment: production
         initial-status: in_progress
 
-    - name: Deploy (${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io)
+    - name: Deploy (${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io.i.alokai.cloud)
       uses: fjogeleit/http-request-action@v1
       with:
+        # not sure about this
         url: "${{ inputs.console_api_url }}/cloud/instances/${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io/deploy"
         method: "PATCH"
         customHeaders: '{"Content-Type":"application/json"}'
@@ -59,7 +60,7 @@ runs:
       uses: chrnorm/deployment-status@releases/v2
       with:
         token: "${{ github.token }}"
-        environment-url: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
+        environment-url: https://${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io.i.alokai.cloud
         state: "success"
         description: Congratulations! The deploy is done.
         deployment-id: ${{ steps.deployment.outputs.deployment_id }}
@@ -69,7 +70,7 @@ runs:
       uses: chrnorm/deployment-status@releases/v2
       with:
         token: "${{ github.token }}"
-        environment-url: https://${{ inputs.project_name }}.${{ inputs.cloud_region }}.gcp.storefrontcloud.io
+        environment-url: https://${{ inputs.project_name }}-${{ inputs.cloud_region }}-gcp-storefrontcloud-io.i.alokai.cloud
         description: Unfortunately, the instance hasn't been updated.
         state: "failure"
         deployment-id: ${{ steps.deployment.outputs.deployment_id }}
